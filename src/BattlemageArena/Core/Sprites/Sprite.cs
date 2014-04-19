@@ -154,6 +154,11 @@ namespace BattlemageArena.Core.Sprites
         /// </summary>
         /// <param name="gameTime">Current game time</param>
         /// <param name="spriteBatch">SpriteBatch to be used for drawing.</param>
+        /// <param name="position">Sprite position.</param>
+        /// <param name="color">Sprite color.</param>
+        /// <param name="rotation">Sprite rotation.</param>
+        /// <param name="scale">Sprite scale.</param>
+        /// <param name="layerDepth">Layer depth.</param>
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch, Vector2 position, Color color, float rotation = 0.0f, float scale = 1.0f, float layerDepth = 0f)
         {
             if (_currentAnimation >= 0)
