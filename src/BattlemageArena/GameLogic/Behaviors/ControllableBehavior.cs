@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using BattlemageArena.Core.Entities;
 using BattlemageArena.Core.Input;
+using BattlemageArena.GameLogic.Entities;
 using Microsoft.Xna.Framework;
 
 namespace BattlemageArena.GameLogic.Behaviors
@@ -13,6 +14,7 @@ namespace BattlemageArena.GameLogic.Behaviors
     {
         #region Attributes
         private GenericInput _input;
+        private Player _player;
         #endregion Attributes
 
         #region Properties
@@ -23,6 +25,7 @@ namespace BattlemageArena.GameLogic.Behaviors
         public ControllableBehavior(Entity parent, GenericInput input) : base(parent)
         {
             this._input = input;
+            this._player = parent as Player;
 
             //Player didn't set movement speed
             if (MovementSpeed < 0.0001f) MovementSpeed = 0.2f;
@@ -32,7 +35,10 @@ namespace BattlemageArena.GameLogic.Behaviors
         #region Methods
         public override void Update(GameTime gameTime)
         {
-            this.Entity.Position += _input.LeftDirectional * gameTime.ElapsedGameTime.Milliseconds * MovementSpeed;
+            if (_player != null)
+            {
+                this._player.Move(_input.LeftDirectional*gameTime.ElapsedGameTime.Milliseconds*MovementSpeed);
+            }
         }
         #endregion Methods
     }
