@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BattlemageArena.Core;
+using BattlemageArena.Core.Sprites;
+using BattlemageArena.Game.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -19,6 +22,8 @@ namespace BattlemageArena
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        private Player player;
+
         public GameMain()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -36,6 +41,8 @@ namespace BattlemageArena
             // TODO: Add your initialization logic here
 
             base.Initialize();
+
+            this.Window.Title = "Battlemage Arena";
         }
 
         /// <summary>
@@ -46,8 +53,9 @@ namespace BattlemageArena
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            GameContent.Initialize(Content);
 
-            // TODO: use this.Content to load your game content here
+            player = new Player(new Vector2(10, 10), Color.White);
         }
 
         /// <summary>
@@ -70,7 +78,7 @@ namespace BattlemageArena
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // TODO: Add your update logic here
+            player.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -83,7 +91,9 @@ namespace BattlemageArena
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            player.Draw(gameTime, spriteBatch);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
