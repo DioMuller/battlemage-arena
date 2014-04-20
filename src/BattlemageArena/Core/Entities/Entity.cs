@@ -37,11 +37,6 @@ namespace BattlemageArena.Core.Entities
         public string Tag { get; set; }
 
         /// <summary>
-        /// Contains all the entities behavior, that will be used during the entity's update logic.
-        /// </summary>
-        public List<Behavior> Behaviors { get; private set; }
-
-        /// <summary>
         /// Entity position.
         /// </summary>
         public Vector2 Position { get; set; }
@@ -75,6 +70,14 @@ namespace BattlemageArena.Core.Entities
                 return new Vector2(Sprite.FrameSize.X, Sprite.FrameSize.Y);
             }
         }
+
+        public Rectangle BoundingBox
+        {
+            get
+            {
+                return new Rectangle((int)Position.X, (int)Position.Y, (int)Size.X, (int) Size.Y);
+            }
+        }
         #endregion Properties
 
         #region Constructors
@@ -83,7 +86,6 @@ namespace BattlemageArena.Core.Entities
         /// </summary>
         public Entity()
         {
-            Behaviors = new List<Behavior>();
             Children = new List<Entity>();
             _childrenToRemove = new Stack<Entity>();
 
@@ -103,11 +105,6 @@ namespace BattlemageArena.Core.Entities
             while (_childrenToRemove.Count != 0)
             {
                 Children.Remove(_childrenToRemove.Pop());
-            }
-
-            foreach (Behavior b in Behaviors)
-            {
-                if (b.IsActive) b.Update(gameTime);
             }
 
             foreach( Entity e in Children )
@@ -142,16 +139,6 @@ namespace BattlemageArena.Core.Entities
                     Color = Color.White;
                 }
             }
-        }
-
-        /// <summary>
-        /// Gets behavior by type.
-        /// </summary>
-        /// <typeparam name="T">Behavior type</typeparam>
-        /// <returns>Behavior of type or null.</returns>
-        public T GetBehavior<T>() where T : Behavior
-        {
-            return Behaviors.OfType<T>().FirstOrDefault();
         }
 
         /// <summary>

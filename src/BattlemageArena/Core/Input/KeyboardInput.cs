@@ -29,11 +29,12 @@ namespace BattlemageArena.Core.Input
             {
                 Vector2 direction = Vector2.Zero;
 
-                if (Keyboard.GetState().IsKeyDown(Keys.W)) direction.Y -= 1f;
-                if (Keyboard.GetState().IsKeyDown(Keys.S)) direction.Y += 1f;
-                if (Keyboard.GetState().IsKeyDown(Keys.A)) direction.X -= 1f;
-                if (Keyboard.GetState().IsKeyDown(Keys.D)) direction.X += 1f;
+                if (Keyboard.GetState().IsKeyDown(Keys.W) || Keyboard.GetState().IsKeyDown(Keys.Up)) direction.Y -= 1f;
+                if (Keyboard.GetState().IsKeyDown(Keys.S) || Keyboard.GetState().IsKeyDown(Keys.Down)) direction.Y += 1f;
+                if (Keyboard.GetState().IsKeyDown(Keys.A) || Keyboard.GetState().IsKeyDown(Keys.Left)) direction.X -= 1f;
+                if (Keyboard.GetState().IsKeyDown(Keys.D) || Keyboard.GetState().IsKeyDown(Keys.Right)) direction.X += 1f;
 
+                if( direction != Vector2.Zero ) direction.Normalize();
                 return direction;
             }
         }

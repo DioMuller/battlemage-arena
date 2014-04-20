@@ -6,7 +6,6 @@ using BattlemageArena.Core.Entities;
 using BattlemageArena.Core.Input;
 using BattlemageArena.Core.Level;
 using BattlemageArena.Core.Sprites;
-using BattlemageArena.GameLogic.Behaviors;
 using Microsoft.Xna.Framework;
 
 namespace BattlemageArena.GameLogic.Entities
@@ -31,7 +30,23 @@ namespace BattlemageArena.GameLogic.Entities
         /// Level where the player is playing.
         /// </summary>
         private Level _level;
+
+        /// <summary>
+        /// Input
+        /// </summary>
+        private GenericInput _input;
         #endregion
+
+        #region Properties
+        /// <summary>
+        /// Player Team
+        /// </summary>
+        public Color Team { get; private set; }
+        /// <summary>
+        /// Player Movement Speed
+        /// </summary>
+        public float MovementSpeed { get; set; }
+        #endregion Properties
 
         #region Constructors
         public Player(Level level, Vector2 position, Color color, GenericInput inputMethod)
@@ -41,6 +56,7 @@ namespace BattlemageArena.GameLogic.Entities
             Position = position;
 
             Color = color;
+            Team = color;
 
             Sprite.Animations.Add(new Animation("walking_down", 0, 0, 3));
             Sprite.Animations.Add(new Animation("walking_up", 0, 4, 7));
@@ -50,49 +66,54 @@ namespace BattlemageArena.GameLogic.Entities
             _currentDirection = Direction.Down;
             _level = level;
 
-            Sprite.ChangeAnimation(0);
+            _input = inputMethod;
+            
+            //Player didn't set movement speed
+            if (MovementSpeed < 0.0001f) MovementSpeed = 0.2f;
 
-            Behaviors.Add(new ControllableBehavior(this, inputMethod));
+            Sprite.ChangeAnimation(0);
         }
         #endregion Constructors
 
         #region Methods
         public override void Update(GameTime gameTime)
         {
-            Vector2 oldPosition = Position;
+            #region Movement
+            Move(_input.LeftDirectional * gameTime.ElapsedGameTime.Milliseconds * MovementSpeed);
+            #endregion Movement
 
             base.Update(gameTime);
-
-            Vector2 positionDiff = Position - oldPosition;
-            Direction newDirection = _currentDirection;
-
-            if (positionDiff == Vector2.Zero) return;
-
-            if (Math.Abs(positionDiff.X) > Math.Abs(positionDiff.Y))
-            {
-                if(positionDiff.X < 0) newDirection = Direction.Left;
-                else newDirection = Direction.Right;
-            }
-            else
-            {
-                if (positionDiff.Y < 0) newDirection = Direction.Up;
-                else newDirection = Direction.Down;                
-            }
-
-            if (newDirection != _currentDirection)
-            {
-                _currentDirection = newDirection;
-                Sprite.ChangeAnimation((int) _currentDirection);
-            }
         }
 
         public void Move(Vector2 movement)
         {
             Vector2 newPosition = (Position) + movement;
 
-            if (_level.IsOnBounds(new Rectangle((int) newPosition.X, (int) newPosition.Y, 
-                                    64, 64)))
+            if (_level.IsOnBounds(new Rectangle((int) newPosition.X, (int) newPosition.Y,
+                                    (int) Size.X, (int) Size.Y)))
             {
+
+                Direction newDirection = _currentDirection;
+
+                if (movement == Vector2.Zero) return;
+
+                if (Math.Abs(movement.X) > Math.Abs(movement.Y))
+                {
+                    if (movement.X < 0) newDirection = Direction.Left;
+                    else newDirection = Direction.Right;
+                }
+                else
+                {
+                    if (movement.Y < 0) newDirection = Direction.Up;
+                    else newDirection = Direction.Down;
+                }
+
+                if (newDirection != _currentDirection)
+                {
+                    _currentDirection = newDirection;
+                    Sprite.ChangeAnimation((int)_currentDirection);
+                }
+
                 Position = newPosition;
             }
         }
