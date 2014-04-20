@@ -7,7 +7,7 @@ using BattlemageArena.Core.Entities;
 using BattlemageArena.Core.Input;
 using Microsoft.Xna.Framework;
 
-namespace BattlemageArena.Game
+namespace BattlemageArena.GameLogic.Behaviors
 {
     public class ControllableBehavior : Behavior
     {

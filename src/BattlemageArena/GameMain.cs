@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BattlemageArena.Core;
+using BattlemageArena.Core.Input;
 using BattlemageArena.Core.Sprites;
-using BattlemageArena.Game.Entities;
+using BattlemageArena.GameLogic.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -22,7 +23,7 @@ namespace BattlemageArena
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        private Player player;
+        private List<Player> players;
 
         public GameMain()
         {
@@ -38,11 +39,13 @@ namespace BattlemageArena
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
 
             this.Window.Title = "Battlemage Arena";
+            graphics.PreferredBackBufferWidth = 960;
+            graphics.PreferredBackBufferHeight = 540;
+
+            graphics.ApplyChanges();
         }
 
         /// <summary>
@@ -55,7 +58,9 @@ namespace BattlemageArena
             spriteBatch = new SpriteBatch(GraphicsDevice);
             GameContent.Initialize(Content);
 
-            player = new Player(new Vector2(10, 10), Color.White);
+            players = new List<Player>();
+            players.Add(new Player(new Vector2(10, 10), Color.Blue, new KeyboardInput()));
+            players.Add(new Player(new Vector2(820, 460), Color.Red, new GamepadInput(PlayerIndex.One)));
         }
 
         /// <summary>
@@ -78,7 +83,10 @@ namespace BattlemageArena
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            player.Update(gameTime);
+            foreach (Player player in players)
+            {
+                player.Update(gameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -92,7 +100,10 @@ namespace BattlemageArena
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            player.Draw(gameTime, spriteBatch);
+            foreach (Player player in players)
+            {
+                player.Draw(gameTime, spriteBatch);
+            }
             spriteBatch.End();
 
             base.Draw(gameTime);

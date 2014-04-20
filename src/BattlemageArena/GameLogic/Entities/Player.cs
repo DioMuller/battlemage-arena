@@ -5,9 +5,10 @@ using System.Text;
 using BattlemageArena.Core.Entities;
 using BattlemageArena.Core.Input;
 using BattlemageArena.Core.Sprites;
+using BattlemageArena.GameLogic.Behaviors;
 using Microsoft.Xna.Framework;
 
-namespace BattlemageArena.Game.Entities
+namespace BattlemageArena.GameLogic.Entities
 {
     public enum Direction
     {
@@ -27,7 +28,7 @@ namespace BattlemageArena.Game.Entities
         #endregion
 
         #region Constructors
-        public Player(Vector2 position, Color color)
+        public Player(Vector2 position, Color color, GenericInput inputMethod)
         {
             Sprite = new Sprite("Sprites/mage", new Point(64, 64), 100);
             Sprite.Origin = new Vector2(32, 32);
@@ -44,7 +45,7 @@ namespace BattlemageArena.Game.Entities
 
             Sprite.ChangeAnimation(0);
 
-            Behaviors.Add(new ControllableBehavior(this, new GamepadInput(PlayerIndex.One)));
+            Behaviors.Add(new ControllableBehavior(this, inputMethod));
         }
         #endregion Constructors
 
