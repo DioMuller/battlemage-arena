@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BattlemageArena.Core;
 using BattlemageArena.Core.Input;
+using BattlemageArena.Core.Level;
 using BattlemageArena.Core.Sprites;
 using BattlemageArena.GameLogic.Entities;
 using Microsoft.Xna.Framework;
@@ -23,7 +24,7 @@ namespace BattlemageArena
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        private List<Player> players;
+        private Level level;
 
         public GameMain()
         {
@@ -58,9 +59,7 @@ namespace BattlemageArena
             spriteBatch = new SpriteBatch(GraphicsDevice);
             GameContent.Initialize(Content);
 
-            players = new List<Player>();
-            players.Add(new Player(new Vector2(10, 10), Color.Blue, new KeyboardInput()));
-            players.Add(new Player(new Vector2(820, 460), Color.Red, new GamepadInput(PlayerIndex.One)));
+            level = new Level("Images/arena", 960, 540, 4, true);
         }
 
         /// <summary>
@@ -80,13 +79,10 @@ namespace BattlemageArena
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            foreach (Player player in players)
-            {
-                player.Update(gameTime);
-            }
+            level.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -100,10 +96,9 @@ namespace BattlemageArena
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            foreach (Player player in players)
-            {
-                player.Draw(gameTime, spriteBatch);
-            }
+            
+            level.Draw(gameTime, spriteBatch);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
