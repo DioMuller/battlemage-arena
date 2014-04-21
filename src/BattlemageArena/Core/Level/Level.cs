@@ -7,6 +7,7 @@ using BattlemageArena.Core.Input;
 using BattlemageArena.GameLogic.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace BattlemageArena.Core.Level
 {
@@ -15,9 +16,18 @@ namespace BattlemageArena.Core.Level
         #region Attributes
         private Rectangle _bounds;
         private Texture2D _background;
+        private SpriteFont _font;
         private List<Entity> _entities;
         private Stack<Entity> _toAdd; 
-        private Stack<Entity> _toRemove; 
+        private Stack<Entity> _toRemove;
+
+        private bool _gameEnded;
+        private Color _winnerColor;
+        private string _winnerText;
+        private Vector2 _textOrigin;
+        private Vector2 _screenCenter;
+        private float _winnerTimer;
+
         #endregion Attributes
 
         #region Static Attributes
@@ -29,6 +39,8 @@ namespace BattlemageArena.Core.Level
         };
 
         private static Color[] colors = {Color.Blue, Color.Red, Color.Yellow, Color.Green};
+
+        private static string[] names = {"Blue", "Red", "Yellow", "Green"};
         #endregion Static Attributes
 
         #region Constructor
@@ -46,44 +58,77 @@ namespace BattlemageArena.Core.Level
 
             _bounds = new Rectangle(0, 0, width, height);
             _background = GameContent.LoadContent<Texture2D>(background);
+            _font = GameContent.LoadContent<SpriteFont>("Fonts/BattlemageFont");
+            _textOrigin = Vector2.Zero;
+            _screenCenter = new Vector2(width / 2.0f, height / 2.0f);
+
+            _gameEnded = false;
+            _winnerColor = Color.Black;
+            _winnerText = String.Empty;
 
             for (int i = 0; i < playerCount; i++)
             {
-                _entities.Add(new Player(this, positions[i], colors[i], inputs[i + diff]));
+                _entities.Add(new Player(this, positions[i], colors[i], inputs[i + diff]) { Name = names[i] });
             }
         }
         #endregion Constructor
 
-        #region Methods
-        /// <summary>
-        /// Checks if rect is on bounds.
-        /// </summary>
-        /// <param name="rect">Rectangle to be tested.</param>
-        /// <returns>Is the rectangle on the bounds for the level?</returns>
-        public bool IsOnBounds(Rectangle rect)
-        {
-            if (rect.X < _bounds.X || rect.Y < _bounds.Y ||
-                rect.X + rect.Width > _bounds.X + _bounds.Width ||
-                rect.Y + rect.Height > _bounds.Y + _bounds.Height)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
+        #region Game Cycle Methods
         public void Update(GameTime gameTime)
         {
+            #region Entity Control
+            // Adds new entities.
             while (_toAdd.Count != 0)
             {
                 _entities.Add(_toAdd.Pop());
             }
 
+            // Removes old entities on to remove list.
             while (_toRemove.Count != 0)
             {
                 _entities.Remove(_toRemove.Pop());
             }
+            #endregion Entity Control
 
+            #region Endgame Control
+            // Checks for game exit/reset.
+            if (!_gameEnded)
+            {
+                // Check if someone won.
+                var players = _entities.OfType<Player>();
+                int count = players.Count();
+                if (count <= 1)
+                {
+                    if (players.Count() == 0)
+                    {
+                        _winnerColor = Color.White;
+                        _winnerText = "Draw!";
+                    }
+                    else
+                    {
+                        Player player = players.First();
+                        _winnerColor = player.Color;
+                        _winnerText = player.Name + " Wins!";
+                    }
+
+                    _winnerTimer = 5000;
+
+                    _textOrigin = (_font.MeasureString(_winnerText) / 2);
+                    _gameEnded = true;
+                }
+            }
+            else
+            {
+                _winnerTimer -= gameTime.ElapsedGameTime.Milliseconds;
+
+                if (_winnerTimer < 0.0f)
+                {
+                    GameMain.ResetGame();
+                }
+            }
+            #endregion Endgame Control
+
+            // And finally, updates all entities.
             foreach (Entity entity in _entities)
             {
                 entity.Update(gameTime);
@@ -98,8 +143,15 @@ namespace BattlemageArena.Core.Level
             {
                 entity.Draw(gameTime, spriteBatch);
             }
-        }
 
+            if (_gameEnded)
+            {
+                 spriteBatch.DrawString(_font, _winnerText, _screenCenter, _winnerColor, 0.0f, _textOrigin, Vector2.One * 2, SpriteEffects.None, 1.0f);
+            }
+        }
+        #endregion Game Cycle Methods
+
+        #region Helper Methods
         public void AddEntity(Entity entity)
         {
             if (!_toAdd.Contains(entity))
@@ -116,6 +168,23 @@ namespace BattlemageArena.Core.Level
         {
             return _entities.OfType<T>().Where((ent) => ent.BoundingBox.Intersects(rect));
         }
-        #endregion Methods
+
+        /// <summary>
+        /// Checks if rect is on bounds.
+        /// </summary>
+        /// <param name="rect">Rectangle to be tested.</param>
+        /// <returns>Is the rectangle on the bounds for the level?</returns>
+        public bool IsOnBounds(Rectangle rect)
+        {
+            if (rect.X < _bounds.X || rect.Y < _bounds.Y ||
+                rect.X + rect.Width > _bounds.X + _bounds.Width ||
+                rect.Y + rect.Height > _bounds.Y + _bounds.Height)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        #endregion Helper Methods
     }
 }

@@ -21,17 +21,27 @@ namespace BattlemageArena
     /// </summary>
     public class GameMain : Microsoft.Xna.Framework.Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        #region Attributes
+        private GraphicsDeviceManager _graphics;
+        private SpriteBatch _spriteBatch;
+        private Level _level;
 
-        private Level level;
+        /// <summary>
+        /// Instance for static methods.
+        /// </summary>
+        private static GameMain _instance;
+        #endregion Attributes
 
+        #region Constructors
         public GameMain()
         {
-            graphics = new GraphicsDeviceManager(this);
+            _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            _instance = this;
         }
+        #endregion Constructors
 
+        #region Game Override Methods
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -43,10 +53,10 @@ namespace BattlemageArena
             base.Initialize();
 
             this.Window.Title = "Battlemage Arena";
-            graphics.PreferredBackBufferWidth = 960;
-            graphics.PreferredBackBufferHeight = 540;
+            _graphics.PreferredBackBufferWidth = 960;
+            _graphics.PreferredBackBufferHeight = 540;
 
-            graphics.ApplyChanges();
+            _graphics.ApplyChanges();
         }
 
         /// <summary>
@@ -56,10 +66,10 @@ namespace BattlemageArena
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
             GameContent.Initialize(Content);
 
-            level = new Level("Images/arena", 960, 540, 4, true);
+            Reset();
         }
 
         /// <summary>
@@ -82,7 +92,7 @@ namespace BattlemageArena
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            level.Update(gameTime);
+            _level.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -95,13 +105,30 @@ namespace BattlemageArena
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+            _spriteBatch.Begin();
             
-            level.Draw(gameTime, spriteBatch);
+            _level.Draw(gameTime, _spriteBatch);
 
-            spriteBatch.End();
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
+        #endregion Game Override Methods
+
+        #region Methods
+
+        internal void Reset()
+        {
+            _level = new Level("Images/arena", 960, 540, 4, true);
+        }
+        #endregion Methods
+
+        #region Static Methods
+
+        public static void ResetGame()
+        {
+            _instance.Reset();
+        }
+        #endregion Static Methods
     }
 }

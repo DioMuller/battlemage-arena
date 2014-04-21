@@ -50,6 +50,8 @@ namespace BattlemageArena.GameLogic.Entities
         /// Player Movement Speed
         /// </summary>
         public float MovementSpeed { get; set; }
+
+        public string Name { get; set; }
         #endregion Properties
 
         #region Constructors
