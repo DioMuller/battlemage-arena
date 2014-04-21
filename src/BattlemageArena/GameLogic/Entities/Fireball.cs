@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using BattlemageArena.Core.Entities;
 using BattlemageArena.Core.Level;
 using BattlemageArena.Core.Sprites;
@@ -58,7 +60,28 @@ namespace BattlemageArena.GameLogic.Entities
 
         public override void Update(GameTime gameTime)
         {
+            // Update position and bounding box
             Position += (_direction*gameTime.ElapsedGameTime.Milliseconds*_movementSpeed);
+            Rectangle bbox = BoundingBox;
+
+            // Checks if is on level and destroys if not.
+            if (!_level.IsOnBounds(bbox))
+            {
+                _level.RemoveEntity(this);
+            }
+            
+            // Checks if collides with player of other team
+            IEnumerable<Player> collisions = _level.GetCollisions<Player>(bbox);
+
+            foreach (Player player in collisions)
+            {
+                if (player.Color != this.Color)
+                {
+                    player.Hurt();
+                    _level.RemoveEntity(this);
+                }
+            }
+            
             base.Update(gameTime);
         }
 

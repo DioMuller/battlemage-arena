@@ -102,12 +102,19 @@ namespace BattlemageArena.Core.Level
 
         public void AddEntity(Entity entity)
         {
-            _toAdd.Push(entity);
+            if (!_toAdd.Contains(entity))
+                _toAdd.Push(entity);
         }
 
         public void RemoveEntity(Entity entity)
         {
-            _toRemove.Push(entity);
+            if( !_toRemove.Contains(entity))
+                _toRemove.Push(entity);
+        }
+
+        public IEnumerable<T> GetCollisions<T>(Rectangle rect) where T : Entity
+        {
+            return _entities.OfType<T>().Where((ent) => ent.BoundingBox.Intersects(rect));
         }
         #endregion Methods
     }

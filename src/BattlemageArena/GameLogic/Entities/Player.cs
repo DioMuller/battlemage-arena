@@ -41,6 +41,8 @@ namespace BattlemageArena.GameLogic.Entities
         /// Has the player shot?
         /// </summary>
         private bool _shot;
+
+        private int _health = 5;
         #endregion
 
         #region Properties
@@ -81,12 +83,19 @@ namespace BattlemageArena.GameLogic.Entities
         #region Methods
         public override void Update(GameTime gameTime)
         {
+            #region Dying
+            if (_health <= 0)
+            {
+                _level.RemoveEntity(this);
+                return;
+            }
+            #endregion Dying
+
             #region Movement
             Move(_input.LeftDirectional * gameTime.ElapsedGameTime.Milliseconds * MovementSpeed);
             #endregion Movement
 
             #region Shooting
-
             if (_input.FaceButtonA == ButtonState.Pressed)
             {
                 if (!_shot)
@@ -100,6 +109,7 @@ namespace BattlemageArena.GameLogic.Entities
                 _shot = false;
             }
             #endregion Shooting
+
             base.Update(gameTime);
         }
 
@@ -134,6 +144,11 @@ namespace BattlemageArena.GameLogic.Entities
 
                 Position = newPosition;
             }
+        }
+
+        public void Hurt()
+        {
+            _health--;
         }
         #endregion Methods
     }
