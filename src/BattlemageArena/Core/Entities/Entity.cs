@@ -71,11 +71,16 @@ namespace BattlemageArena.Core.Entities
             }
         }
 
+        public Vector2 Origin
+        {
+            get { return Sprite.Origin; }
+        }
+
         public Rectangle BoundingBox
         {
             get
             {
-                return new Rectangle((int)Position.X, (int)Position.Y, (int)Size.X, (int) Size.Y);
+                return new Rectangle((int) (Position.X - Origin.X), (int) (Position.Y - Origin.Y), (int)Size.X, (int) Size.Y);
             }
         }
         #endregion Properties

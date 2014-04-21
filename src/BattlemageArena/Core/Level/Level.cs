@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BattlemageArena.Core.Entities;
 using BattlemageArena.Core.Input;
 using BattlemageArena.GameLogic.Entities;
 using Microsoft.Xna.Framework;
@@ -9,12 +10,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace BattlemageArena.Core.Level
 {
-    class Level
+    public class Level
     {
         #region Attributes
         private Rectangle _bounds;
         private Texture2D _background;
-        private List<Player> _players;
+        private List<Entity> _entities;
+        private Stack<Entity> _toAdd; 
+        private Stack<Entity> _toRemove; 
         #endregion Attributes
 
         #region Static Attributes
@@ -37,13 +40,16 @@ namespace BattlemageArena.Core.Level
             if (playerCount < 2) playerCount = 2;
             if (playerCount > 4) playerCount = 4;
 
-            _players = new List<Player>();
+            _entities = new List<Entity>();
+            _toRemove = new Stack<Entity>();
+            _toAdd = new Stack<Entity>();
+
             _bounds = new Rectangle(0, 0, width, height);
             _background = GameContent.LoadContent<Texture2D>(background);
 
             for (int i = 0; i < playerCount; i++)
             {
-                _players.Add(new Player(this, positions[i], colors[i], inputs[i + diff]));
+                _entities.Add(new Player(this, positions[i], colors[i], inputs[i + diff]));
             }
         }
         #endregion Constructor
@@ -68,9 +74,19 @@ namespace BattlemageArena.Core.Level
 
         public void Update(GameTime gameTime)
         {
-            foreach (Player player in _players)
+            while (_toAdd.Count != 0)
             {
-                player.Update(gameTime);
+                _entities.Add(_toAdd.Pop());
+            }
+
+            while (_toRemove.Count != 0)
+            {
+                _entities.Remove(_toRemove.Pop());
+            }
+
+            foreach (Entity entity in _entities)
+            {
+                entity.Update(gameTime);
             }
         }
 
@@ -78,10 +94,20 @@ namespace BattlemageArena.Core.Level
         {
             spriteBatch.Draw(_background, _bounds, Color.White);
 
-            foreach (Player player in _players)
+            foreach (Entity entity in _entities)
             {
-                player.Draw(gameTime, spriteBatch);
+                entity.Draw(gameTime, spriteBatch);
             }
+        }
+
+        public void AddEntity(Entity entity)
+        {
+            _toAdd.Push(entity);
+        }
+
+        public void RemoveEntity(Entity entity)
+        {
+            _toRemove.Push(entity);
         }
         #endregion Methods
     }

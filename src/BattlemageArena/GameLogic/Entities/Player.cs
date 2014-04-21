@@ -7,6 +7,7 @@ using BattlemageArena.Core.Input;
 using BattlemageArena.Core.Level;
 using BattlemageArena.Core.Sprites;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace BattlemageArena.GameLogic.Entities
 {
@@ -35,13 +36,14 @@ namespace BattlemageArena.GameLogic.Entities
         /// Input
         /// </summary>
         private GenericInput _input;
+
+        /// <summary>
+        /// Has the player shot?
+        /// </summary>
+        private bool _shot;
         #endregion
 
         #region Properties
-        /// <summary>
-        /// Player Team
-        /// </summary>
-        public Color Team { get; private set; }
         /// <summary>
         /// Player Movement Speed
         /// </summary>
@@ -52,11 +54,10 @@ namespace BattlemageArena.GameLogic.Entities
         public Player(Level level, Vector2 position, Color color, GenericInput inputMethod)
         {
             Sprite = new Sprite("Sprites/mage", new Point(64, 64), 100);
-            Sprite.Origin = new Vector2(0,0);
-            Position = position;
+            Sprite.Origin = new Vector2(32, 32);
+            Position = position + Origin;
 
             Color = color;
-            Team = color;
 
             Sprite.Animations.Add(new Animation("walking_down", 0, 0, 3));
             Sprite.Animations.Add(new Animation("walking_up", 0, 4, 7));
@@ -65,6 +66,8 @@ namespace BattlemageArena.GameLogic.Entities
 
             _currentDirection = Direction.Down;
             _level = level;
+
+            _shot = false;
 
             _input = inputMethod;
             
@@ -82,6 +85,21 @@ namespace BattlemageArena.GameLogic.Entities
             Move(_input.LeftDirectional * gameTime.ElapsedGameTime.Milliseconds * MovementSpeed);
             #endregion Movement
 
+            #region Shooting
+
+            if (_input.FaceButtonA == ButtonState.Pressed)
+            {
+                if (!_shot)
+                {
+                    _level.AddEntity(new Fireball(_level, Position, Color, _currentDirection));
+                    _shot = true;
+                }
+            }
+            else
+            {
+                _shot = false;
+            }
+            #endregion Shooting
             base.Update(gameTime);
         }
 
@@ -89,7 +107,7 @@ namespace BattlemageArena.GameLogic.Entities
         {
             Vector2 newPosition = (Position) + movement;
 
-            if (_level.IsOnBounds(new Rectangle((int) newPosition.X, (int) newPosition.Y,
+            if (_level.IsOnBounds(new Rectangle((int) (newPosition.X - Origin.X), (int) (newPosition.Y - Origin.Y),
                                     (int) Size.X, (int) Size.Y)))
             {
 
