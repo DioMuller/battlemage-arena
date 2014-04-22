@@ -68,7 +68,7 @@ namespace BattlemageArena.Core.Level
 
             for (int i = 0; i < playerCount; i++)
             {
-                _entities.Add(new Player(this, positions[i], colors[i], inputs[i + diff]) { Name = names[i] });
+                _entities.Add(new Player(this, positions[i], colors[i], inputs[i + diff], names[i]));
             }
         }
         #endregion Constructor

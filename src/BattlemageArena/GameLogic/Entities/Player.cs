@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BattlemageArena.Core;
 using BattlemageArena.Core.Entities;
 using BattlemageArena.Core.Input;
 using BattlemageArena.Core.Level;
 using BattlemageArena.Core.Sprites;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace BattlemageArena.GameLogic.Entities
@@ -43,6 +45,11 @@ namespace BattlemageArena.GameLogic.Entities
         private bool _shot;
 
         private int _health = 5;
+
+        private SpriteFont _font;
+        private Vector2 _nameSize;
+        private Vector2 _healthSize;
+        private Vector2 _textDiff;
         #endregion
 
         #region Properties
@@ -55,11 +62,17 @@ namespace BattlemageArena.GameLogic.Entities
         #endregion Properties
 
         #region Constructors
-        public Player(Level level, Vector2 position, Color color, GenericInput inputMethod)
+        public Player(Level level, Vector2 position, Color color, GenericInput inputMethod, string name)
         {
             Sprite = new Sprite("Sprites/mage", new Point(64, 64), 100);
             Sprite.Origin = new Vector2(32, 32);
             Position = position + Origin;
+            Name = name;
+
+            _font = GameContent.LoadContent<SpriteFont>("Fonts/BattlemageFont");
+            _nameSize = _font.MeasureString(Name) / 2;
+            _healthSize = _font.MeasureString(_health.ToString()) / 2;
+            _textDiff = Vector2.UnitY * (Size.Y / 2);
 
             Color = color;
 
@@ -113,6 +126,14 @@ namespace BattlemageArena.GameLogic.Entities
             #endregion Shooting
 
             base.Update(gameTime);
+        }
+
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            base.Draw(gameTime, spriteBatch);
+
+            spriteBatch.DrawString(_font, Name, Position - _textDiff, Color, 0.0f, _nameSize, Vector2.One, SpriteEffects.None, 1.0f );
+            spriteBatch.DrawString(_font, _health.ToString(), Position + _textDiff, Color, 0.0f, _healthSize, Vector2.One, SpriteEffects.None, 1.0f);
         }
 
         public void Move(Vector2 movement)
