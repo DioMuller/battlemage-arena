@@ -8,6 +8,7 @@ using BattlemageArena.Core.Input;
 using BattlemageArena.Core.Sprites;
 using BattlemageArena.GameLogic.Screens;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -50,6 +51,10 @@ namespace BattlemageArena.GameLogic.Entities
         private Vector2 _nameSize;
         private Vector2 _healthSize;
         private Vector2 _textDiff;
+
+        private SoundEffect _fireballSfx;
+        private SoundEffect _deathSfx;
+        private SoundEffect _hitSfx;
         #endregion
 
         #region Properties
@@ -91,6 +96,10 @@ namespace BattlemageArena.GameLogic.Entities
             //Player didn't set movement speed
             if (MovementSpeed < 0.0001f) MovementSpeed = 0.2f;
 
+            _deathSfx = GameContent.LoadContent<SoundEffect>("SFX/Death");
+            _fireballSfx = GameContent.LoadContent<SoundEffect>("SFX/Fireball");
+            _hitSfx = GameContent.LoadContent<SoundEffect>("SFX/Explosion");
+
             Sprite.ChangeAnimation(0);
         }
         #endregion Constructors
@@ -102,6 +111,7 @@ namespace BattlemageArena.GameLogic.Entities
             if (_health <= 0)
             {
                 _level.RemoveEntity(this);
+                _deathSfx.Play();
                 return;
             }
             #endregion Dying
@@ -116,6 +126,7 @@ namespace BattlemageArena.GameLogic.Entities
                 if (!_shot)
                 {
                     _level.AddEntity(new Fireball(_level, Position, Color, _currentDirection));
+                    _fireballSfx.Play();
                     _shot = true;
                 }
             }
@@ -172,6 +183,7 @@ namespace BattlemageArena.GameLogic.Entities
         public void Hurt()
         {
             _health--;
+            _hitSfx.Play();
         }
         #endregion Methods
     }
