@@ -74,7 +74,7 @@ namespace BattlemageArena.GameLogic.Entities
             Position = position + Origin;
             Name = name;
 
-            _font = GameContent.LoadContent<SpriteFont>("Fonts/BattlemageFont");
+            _font = GameContent.LoadContent<SpriteFont>("Fonts/SmallFont");
             _nameSize = _font.MeasureString(Name) / 2;
             _healthSize = _font.MeasureString(_health.ToString()) / 2;
             _textDiff = Vector2.UnitY * (Size.Y / 2);

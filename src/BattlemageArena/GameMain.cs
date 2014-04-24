@@ -34,6 +34,9 @@ namespace BattlemageArena
 
         private bool _gameRunning;
 
+        private Song _titleSong;
+        private Song _gameSong;
+
         /// <summary>
         /// Instance for static methods.
         /// </summary>
@@ -87,7 +90,13 @@ namespace BattlemageArena
             GameContent.Initialize(Content);
 
             _title = new TitleScreen("Images/arena", Width, Height);
+
             Reset();
+
+            _titleSong = GameContent.LoadContent<Song>("Music/Title");
+            _gameSong = GameContent.LoadContent<Song>("Music/Arena");
+
+            MediaPlayer.Play(_titleSong);
         }
 
         /// <summary>
@@ -150,11 +159,15 @@ namespace BattlemageArena
         {
             _instance.Reset();
             _instance._gameRunning = false;
+
+            MediaPlayer.Play(_instance._titleSong);
         }
 
         public static void StartGame()
         {
             _instance._gameRunning = true;
+
+            MediaPlayer.Play(_instance._gameSong);
         }
         #endregion Static Methods
     }

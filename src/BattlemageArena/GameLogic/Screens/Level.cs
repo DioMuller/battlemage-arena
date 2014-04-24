@@ -18,6 +18,7 @@ namespace BattlemageArena.GameLogic.Screens
         private Rectangle _bounds;
         private Texture2D _background;
         private SpriteFont _font;
+        private SpriteFont _winFont;
         private List<Entity> _entities;
         private Stack<Entity> _toAdd; 
         private Stack<Entity> _toRemove;
@@ -59,7 +60,8 @@ namespace BattlemageArena.GameLogic.Screens
 
             _bounds = new Rectangle(0, 0, width, height);
             _background = GameContent.LoadContent<Texture2D>(background);
-            _font = GameContent.LoadContent<SpriteFont>("Fonts/BattlemageFont");
+            _font = GameContent.LoadContent<SpriteFont>("Fonts/SmallFont");
+            _winFont = GameContent.LoadContent<SpriteFont>("Fonts/BigFont");
             _textOrigin = Vector2.Zero;
             _screenCenter = new Vector2(width / 2.0f, height / 2.0f);
 
@@ -114,7 +116,7 @@ namespace BattlemageArena.GameLogic.Screens
 
                     _winnerTimer = 5000;
 
-                    _textOrigin = (_font.MeasureString(_winnerText) / 2);
+                    _textOrigin = (_winFont.MeasureString(_winnerText) / 2);
                     _gameEnded = true;
                 }
             }
@@ -147,7 +149,7 @@ namespace BattlemageArena.GameLogic.Screens
 
             if (_gameEnded)
             {
-                 spriteBatch.DrawString(_font, _winnerText, _screenCenter, _winnerColor, 0.0f, _textOrigin, Vector2.One * 2, SpriteEffects.None, 1.0f);
+                spriteBatch.DrawString(_winFont, _winnerText, _screenCenter, _winnerColor, 0.0f, _textOrigin, Vector2.One, SpriteEffects.None, 1.0f);
             }
         }
         #endregion Game Cycle Methods

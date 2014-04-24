@@ -7,6 +7,7 @@ using BattlemageArena.Core.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace BattlemageArena.GameLogic.Screens
 {
@@ -28,6 +29,7 @@ namespace BattlemageArena.GameLogic.Screens
         private float _transparencyDiff;
 
         private bool _firstKeyUp;
+
         #endregion Attributes
 
         #region Constructor
@@ -36,7 +38,7 @@ namespace BattlemageArena.GameLogic.Screens
             _bounds = new Rectangle(0, 0, width, height);
             _background = GameContent.LoadContent<Texture2D>(background);
             _logo = GameContent.LoadContent<Texture2D>("Images/Logo");
-            _font = GameContent.LoadContent<SpriteFont>("Fonts/BattlemageFont");
+            _font = GameContent.LoadContent<SpriteFont>("Fonts/SmallFont");
 
             Vector2 bg_center = new Vector2(_logo.Width / 2.0f, _logo.Height / 2.0f);
             Vector2 screen_center = new Vector2(width / 2.0f, height / 2.0f);
