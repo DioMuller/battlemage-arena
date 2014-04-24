@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BattlemageArena.Core;
 using BattlemageArena.Core.Input;
-using BattlemageArena.Core.Level;
+using BattlemageArena.GameLogic.Screens;
 using BattlemageArena.Core.Sprites;
 using BattlemageArena.GameLogic.Entities;
 using Microsoft.Xna.Framework;
@@ -21,10 +21,18 @@ namespace BattlemageArena
     /// </summary>
     public class GameMain : Microsoft.Xna.Framework.Game
     {
+        #region Const
+        private const int Width = 960;
+        private const int Height = 540;
+        #endregion Const
+
         #region Attributes
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private TitleScreen _title;
         private Level _level;
+
+        private bool _gameRunning;
 
         /// <summary>
         /// Instance for static methods.
@@ -32,12 +40,21 @@ namespace BattlemageArena
         private static GameMain _instance;
         #endregion Attributes
 
+        #region Properties
+        public static int PlayerCount { get; set; }
+        public static bool UseKeyboard { get; set; }
+        #endregion Properties
+
         #region Constructors
         public GameMain()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             _instance = this;
+            _gameRunning = false;
+
+            PlayerCount = 2;
+            UseKeyboard = true;
         }
         #endregion Constructors
 
@@ -53,8 +70,8 @@ namespace BattlemageArena
             base.Initialize();
 
             this.Window.Title = "Battlemage Arena";
-            _graphics.PreferredBackBufferWidth = 960;
-            _graphics.PreferredBackBufferHeight = 540;
+            _graphics.PreferredBackBufferWidth = Width;
+            _graphics.PreferredBackBufferHeight = Height;
 
             _graphics.ApplyChanges();
         }
@@ -69,6 +86,7 @@ namespace BattlemageArena
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             GameContent.Initialize(Content);
 
+            _title = new TitleScreen("Images/arena", Width, Height);
             Reset();
         }
 
@@ -92,7 +110,9 @@ namespace BattlemageArena
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            _level.Update(gameTime);
+            if( _gameRunning ) _level.Update(gameTime);
+            else _title.Update(gameTime);
+            
 
             base.Update(gameTime);
         }
@@ -106,8 +126,9 @@ namespace BattlemageArena
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
-            
-            _level.Draw(gameTime, _spriteBatch);
+
+            if (_gameRunning) _level.Draw(gameTime, _spriteBatch);
+            else _title.Draw(gameTime, _spriteBatch);
 
             _spriteBatch.End();
 
@@ -119,7 +140,7 @@ namespace BattlemageArena
 
         internal void Reset()
         {
-            _level = new Level("Images/arena", 960, 540, 4, true);
+            _level = new Level("Images/arena", Width, Height, PlayerCount, UseKeyboard );
         }
         #endregion Methods
 
@@ -128,6 +149,12 @@ namespace BattlemageArena
         public static void ResetGame()
         {
             _instance.Reset();
+            _instance._gameRunning = false;
+        }
+
+        public static void StartGame()
+        {
+            _instance._gameRunning = true;
         }
         #endregion Static Methods
     }

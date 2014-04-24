@@ -78,12 +78,13 @@
     <Compile Include="Core\Input\GamepadInput.cs" />
     <Compile Include="Core\Input\GenericInput.cs" />
     <Compile Include="Core\Input\KeyboardInput.cs" />
-    <Compile Include="Core\Level\Level.cs" />
+    <Compile Include="GameLogic\Screens\Level.cs" />
     <Compile Include="Core\Sprites\Animation.cs" />
     <Compile Include="Core\Sprites\Frame.cs" />
     <Compile Include="Core\Sprites\Sprite.cs" />
     <Compile Include="GameLogic\Entities\Fireball.cs" />
     <Compile Include="GameLogic\Entities\Player.cs" />
+    <Compile Include="GameLogic\Screens\TitleScreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="GameMain.cs" />

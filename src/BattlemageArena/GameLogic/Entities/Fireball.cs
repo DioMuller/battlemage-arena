@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using BattlemageArena.Core.Entities;
-using BattlemageArena.Core.Level;
 using BattlemageArena.Core.Sprites;
+using BattlemageArena.GameLogic.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using BattlemageArena.Core.Extension;

@@ -1,0 +1,101 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using BattlemageArena.Core;
+using BattlemageArena.Core.Sprites;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+
+namespace BattlemageArena.GameLogic.Screens
+{
+    class TitleScreen
+    {
+        #region Attributes
+        private Rectangle _bounds;
+        private Rectangle _titlePosition;
+
+        private Texture2D _background;
+        private SpriteFont _font;
+        private Texture2D _logo;
+
+        private string _startMessage;
+        private Vector2 _startPosition;
+        private Vector2 _startOrigin;
+
+        private float _transparency;
+        private float _transparencyDiff;
+
+        private bool _firstKeyUp;
+        #endregion Attributes
+
+        #region Constructor
+        public TitleScreen(string background, int width, int height)
+        {
+            _bounds = new Rectangle(0, 0, width, height);
+            _background = GameContent.LoadContent<Texture2D>(background);
+            _logo = GameContent.LoadContent<Texture2D>("Images/Logo");
+            _font = GameContent.LoadContent<SpriteFont>("Fonts/BattlemageFont");
+
+            Vector2 bg_center = new Vector2(_logo.Width / 2.0f, _logo.Height / 2.0f);
+            Vector2 screen_center = new Vector2(width / 2.0f, height / 2.0f);
+            _titlePosition = new Rectangle( (int) (screen_center.X - bg_center.X), 
+                                            (int) (screen_center.Y * 0.5 - bg_center.Y),
+                                            (int)(_logo.Width),
+                                            (int)(_logo.Height));
+
+            _startMessage = "Press START or ENTER to start the game";
+            Vector2 startSize = _font.MeasureString(_startMessage);
+            _startOrigin = new Vector2(startSize.X / 2, startSize.Y / 2);
+            _startPosition = new Vector2(screen_center.X, screen_center.Y * 1.7f);
+
+            _transparency = 0.9f;
+            _transparencyDiff = 0.001f;
+
+            _firstKeyUp = false;
+        }
+        #endregion Constructor
+
+        #region Game Cycle Methods
+        public void Update(GameTime gameTime)
+        {
+            if (_transparency < 0.0f || _transparency > 1.0f)
+            {
+                _transparencyDiff *= -1;
+            }
+
+            _transparency += (_transparencyDiff*gameTime.ElapsedGameTime.Milliseconds);
+
+            if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.Start))
+            {
+                GoToGame(false);
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+            {
+                GoToGame(true);
+            }
+            else
+            {
+                _firstKeyUp = true;
+            }
+        }
+
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(_background, _bounds, Color.White);
+            spriteBatch.Draw(_logo, _titlePosition, Color.White);
+            spriteBatch.DrawString(_font, _startMessage, _startPosition, Color.White * _transparency, 0.0f, _startOrigin, Vector2.One, SpriteEffects.None, 1.0f);
+        }
+
+        public void GoToGame(bool useKeyboard)
+        {
+            if (_firstKeyUp)
+            {
+                GameMain.UseKeyboard = useKeyboard;
+                GameMain.StartGame();
+            }
+        }
+        #endregion Game Cycle Methods
+    }
+}
