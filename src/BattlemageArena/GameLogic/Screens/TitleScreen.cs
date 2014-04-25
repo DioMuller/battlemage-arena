@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BattlemageArena.Core;
+using BattlemageArena.Core.Input;
 using BattlemageArena.Core.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -69,7 +70,7 @@ namespace BattlemageArena.GameLogic.Screens
 
             _transparency += (_transparencyDiff*gameTime.ElapsedGameTime.Milliseconds);
 
-            if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.Start))
+            if (MultipleInput.GetInstance().StartButton == ButtonState.Pressed)
             {
                 GoToGame(false);
             }
