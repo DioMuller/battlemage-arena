@@ -145,7 +145,7 @@ namespace BattlemageArena.Core.Input
         {
             get
             {
-                return Keyboard.GetState().IsKeyDown(Keys.Escape) ? ButtonState.Pressed : ButtonState.Released;
+                return Keyboard.GetState().IsKeyDown(Keys.Enter) ? ButtonState.Pressed : ButtonState.Released;
             }
         }
 
