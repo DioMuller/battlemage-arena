@@ -61,7 +61,7 @@ namespace BattlemageArena.GUI.Components
         /// </summary>
         public Component(string name)
         {
-            SelectedTexture = GameContent.LoadContent<Texture2D>("images/menuselected.png");
+            SelectedTexture = GameContent.LoadContent<Texture2D>("images/menuselected");
             Name = name;
             Selectable = true;
         }

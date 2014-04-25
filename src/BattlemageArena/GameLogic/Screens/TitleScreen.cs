@@ -5,6 +5,8 @@ using System.Text;
 using BattlemageArena.Core;
 using BattlemageArena.Core.Input;
 using BattlemageArena.Core.Sprites;
+using BattlemageArena.GameLogic.Entities;
+using BattlemageArena.GUI.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -29,6 +31,9 @@ namespace BattlemageArena.GameLogic.Screens
         private float _transparency;
         private float _transparencyDiff;
 
+        private ComponentList _options;
+        private bool _showOptions;
+
         private bool _firstKeyUp;
 
         #endregion Attributes
@@ -36,6 +41,7 @@ namespace BattlemageArena.GameLogic.Screens
         #region Constructor
         public TitleScreen(string background, int width, int height)
         {
+            #region Title Screen Assets initialization
             _bounds = new Rectangle(0, 0, width, height);
             _background = GameContent.LoadContent<Texture2D>(background);
             _logo = GameContent.LoadContent<Texture2D>("Images/Logo");
@@ -55,6 +61,41 @@ namespace BattlemageArena.GameLogic.Screens
 
             _transparency = 0.9f;
             _transparencyDiff = 0.001f;
+            #endregion Title Screen Assets initialization
+
+            #region Options Initialization
+            _options = new ComponentList();
+            
+            SelectionBox controller = new SelectionBox("Use Keyboard?");
+            controller.AddOption("Yes");
+            controller.AddOption("No");
+            controller.SelectOption(GameMain.UseKeyboard ? "Yes" : "No");
+            _options.AddComponent(controller);
+
+            SelectionBox players = new SelectionBox("Players");
+            players.AddOption("2");
+            players.AddOption("3");
+            players.AddOption("4");
+            players.SelectOption(GameMain.PlayerCount.ToString());
+            _options.AddComponent(players);
+
+            _options.ValueChanged += () =>
+            {
+                string useKeyboard = _options.GetValue("Use Keyboard?");
+                string playersCount = _options.GetValue("Players");
+
+                GameMain.UseKeyboard = (useKeyboard == "Yes");
+                GameMain.PlayerCount = int.Parse(playersCount);
+            };
+
+            _options.AddComponent(new Button("Start Game", () =>
+            {
+                _showOptions = false;
+                GameMain.StartGame();
+            }));
+            _options.Position = new Rectangle(30, 200, width - 60, height - 220);
+            _showOptions = false;
+            #endregion Options Initialization
 
             _firstKeyUp = false;
         }
@@ -70,17 +111,25 @@ namespace BattlemageArena.GameLogic.Screens
 
             _transparency += (_transparencyDiff*gameTime.ElapsedGameTime.Milliseconds);
 
-            if (MultipleInput.GetInstance().StartButton == ButtonState.Pressed)
+            if( ! _showOptions )
             {
-                GoToGame(false);
-            }
-            else if (Keyboard.GetState().IsKeyDown(Keys.Enter))
-            {
-                GoToGame(true);
+                if (MultipleInput.GetInstance().StartButton == ButtonState.Pressed)
+                {
+                    ChangeState(true);
+                }
+                else
+                {
+                    _firstKeyUp = true;
+                }
             }
             else
             {
-                _firstKeyUp = true;
+                _options.Update(gameTime);
+
+                if (MultipleInput.GetInstance().FaceButtonB == ButtonState.Pressed)
+                {
+                    ChangeState(false);
+                }
             }
         }
 
@@ -88,15 +137,21 @@ namespace BattlemageArena.GameLogic.Screens
         {
             spriteBatch.Draw(_background, _bounds, Color.White);
             spriteBatch.Draw(_logo, _titlePosition, Color.White);
-            spriteBatch.DrawString(_font, _startMessage, _startPosition, Color.White * _transparency, 0.0f, _startOrigin, Vector2.One, SpriteEffects.None, 1.0f);
+            if (_showOptions)
+            {
+                _options.Draw(gameTime, spriteBatch);
+            }
+            else
+            {
+                spriteBatch.DrawString(_font, _startMessage, _startPosition, Color.White * _transparency, 0.0f, _startOrigin, Vector2.One, SpriteEffects.None, 1.0f);   
+            }
         }
 
-        public void GoToGame(bool useKeyboard)
+        public void ChangeState(bool showOptions)
         {
             if (_firstKeyUp)
             {
-                GameMain.UseKeyboard = useKeyboard;
-                GameMain.StartGame();
+                _showOptions = showOptions;
             }
         }
         #endregion Game Cycle Methods

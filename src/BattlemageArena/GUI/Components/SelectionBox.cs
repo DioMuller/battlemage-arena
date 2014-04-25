@@ -50,7 +50,7 @@ namespace BattlemageArena.GUI.Components
         public SelectionBox(string label)
             : base(label)
         {
-            Font = GameContent.LoadContent<SpriteFont>("fonts/DefaultFont");
+            Font = GameContent.LoadContent<SpriteFont>("fonts/SmallFont");
             Label = label;
             SelectionChanged += new SelectionChangeDelegate((value) =>
             {
@@ -67,7 +67,7 @@ namespace BattlemageArena.GUI.Components
             _options = new List<string>();
             _current = -1;
 
-            _arrow = GameContent.LoadContent<Texture2D>("images/arrow.png");
+            _arrow = GameContent.LoadContent<Texture2D>("images/arrow");
         }
         #endregion Constructor
 

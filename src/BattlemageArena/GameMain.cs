@@ -91,7 +91,7 @@ namespace BattlemageArena
 
             _title = new TitleScreen("Images/arena", Width, Height);
 
-            Reset();
+            //Reset();
 
             _titleSong = GameContent.LoadContent<Song>("Music/Title");
             _gameSong = GameContent.LoadContent<Song>("Music/Arena");
@@ -165,6 +165,7 @@ namespace BattlemageArena
 
         public static void StartGame()
         {
+            _instance.Reset();
             _instance._gameRunning = true;
 
             MediaPlayer.Play(_instance._gameSong);

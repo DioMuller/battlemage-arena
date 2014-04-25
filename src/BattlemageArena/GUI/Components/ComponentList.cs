@@ -90,7 +90,7 @@ namespace BattlemageArena.GUI.Components
         public ComponentList()
         {
             _components = new List<Component>();
-            _input = new GenericInput();
+            _input = MultipleInput.GetInstance();
             ComponentHeight = null;
 
             _timeout = 0;
@@ -121,7 +121,7 @@ namespace BattlemageArena.GUI.Components
             float x = _input.LeftDirectional.X;
             float y = _input.LeftDirectional.Y;
 
-            if (y != 0 && _timeout <= 0)
+            if (y != 0 && Math.Abs(y) > Math.Abs(x) && _timeout <= 0)
             {
                 _timeout = 200;
 
@@ -137,9 +137,11 @@ namespace BattlemageArena.GUI.Components
                 {
                     _components[_selectedOption].SelectionChanged( x );
                     if( ValueChanged != null ) ValueChanged();
+
+                    _selectSfx.Play();
                 }
 
-                _selectSfx.Play();
+                
             }
             else
             {

@@ -47,24 +47,36 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Left Directional/Stick
         /// </summary>
-        public virtual Vector2 LeftDirectional
+        public override Vector2 LeftDirectional
         {
-            get { return _inputs.Max((input) => input.LeftDirectional); }
-            //_inputs.OrderBy((input) => input.LeftDirectional.Length()).First().LeftDirectional; }
+            get
+            {
+                var selected =
+                    _inputs.Where(
+                        (input) =>
+                            (Math.Abs(input.LeftDirectional.X) > 0.1f || Math.Abs(input.LeftDirectional.Y) > 0.1f));
+                return selected.Count() > 0 ? selected.First().LeftDirectional : Vector2.Zero;
+            }
         }
         /// <summary>
         /// Right Directional/Stick
         /// </summary>
-        public virtual Vector2 RightDirectional
+        public override Vector2 RightDirectional
         {
-            get { return _inputs.Max((input) => input.RightDirectional); }
-            //_inputs.OrderBy((input) => input.RightDirectional.Length()).First().RightDirectional; }
+            get
+            {
+                var selected =
+                _inputs.Where(
+                    (input) =>
+                        (Math.Abs(input.RightDirectional.X) > 0.1f || Math.Abs(input.RightDirectional.Y) > 0.1f));
+                return selected.Count() > 0 ? selected.First().RightDirectional : Vector2.Zero;
+            }
         }
 
         /// <summary>
         /// D-Pad Left direction.
         /// </summary>
-        public virtual ButtonState DirectionLeft
+        public override ButtonState DirectionLeft
         {
             get
             {
@@ -76,7 +88,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// D-Pad Right direction.
         /// </summary>
-        public virtual ButtonState DirectionRight
+        public override ButtonState DirectionRight
         {
             get
             {
@@ -88,7 +100,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// D-Pad Up direction.
         /// </summary>
-        public virtual ButtonState DirectionUp
+        public override ButtonState DirectionUp
         {
             get
             {
@@ -100,7 +112,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// D-Pad Down direction.
         /// </summary>
-        public virtual ButtonState DirectionDown
+        public override ButtonState DirectionDown
         {
             get
             {
@@ -113,7 +125,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Face Button on the A position (On the Xbox 360 Controller). 
         /// </summary>
-        public virtual ButtonState FaceButtonA
+        public override ButtonState FaceButtonA
         {
             get
             {
@@ -125,7 +137,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Face Button on the B position (On the Xbox 360 Controller). 
         /// </summary>
-        public virtual ButtonState FaceButtonB
+        public override ButtonState FaceButtonB
         {
             get
             {
@@ -137,7 +149,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Face Button on the X position (On the Xbox 360 Controller). 
         /// </summary>
-        public virtual ButtonState FaceButtonX
+        public override ButtonState FaceButtonX
         {
             get
             {
@@ -149,7 +161,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Face Button on the Y position (On the Xbox 360 Controller). 
         /// </summary>
-        public virtual ButtonState FaceButtonY
+        public override ButtonState FaceButtonY
         {
             get
             {
@@ -162,7 +174,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Left directional click.
         /// </summary>
-        public virtual ButtonState LeftClick
+        public override ButtonState LeftClick
         {
             get
             {
@@ -175,7 +187,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Right directional click.
         /// </summary>
-        public virtual ButtonState RightClick
+        public override ButtonState RightClick
         {
             get
             {
@@ -188,7 +200,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Start Button
         /// </summary>
-        public virtual ButtonState StartButton
+        public override ButtonState StartButton
         {
             get
             {
@@ -201,7 +213,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Select Button
         /// </summary>
-        public virtual ButtonState SelectButton
+        public override ButtonState SelectButton
         {
             get
             {
@@ -214,7 +226,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Button on the Left Bumper position. 
         /// </summary>
-        public virtual ButtonState LeftBumper
+        public override ButtonState LeftBumper
         {
             get
             {
@@ -226,7 +238,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Button on the Right Bumper position. 
         /// </summary>
-        public virtual ButtonState RightBumper
+        public override ButtonState RightBumper
         {
             get
             {
@@ -239,7 +251,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Button on the Left Trigger position. 
         /// </summary>
-        public virtual float LeftTrigger
+        public override float LeftTrigger
         {
             get
             {
@@ -249,7 +261,7 @@ namespace BattlemageArena.Core.Input
         /// <summary>
         /// Button on the Right Trigger position. 
         /// </summary>
-        public virtual float RightTrigger
+        public override float RightTrigger
         {
             get
             {

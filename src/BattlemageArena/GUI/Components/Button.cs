@@ -28,7 +28,7 @@ namespace BattlemageArena.GUI.Components
         #region Constructor
         public Button(string text, SelectDelegate select) : base(text)
         {
-            Font = GameContent.LoadContent<SpriteFont>("fonts/DefaultFont");
+            Font = GameContent.LoadContent<SpriteFont>("fonts/SmallFont");
             Text = text;
             Select += select;
         }
