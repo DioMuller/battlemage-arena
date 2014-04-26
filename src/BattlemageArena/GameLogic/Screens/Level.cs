@@ -40,7 +40,7 @@ namespace BattlemageArena.GameLogic.Screens
             new GamepadInput(PlayerIndex.Two), new GamepadInput(PlayerIndex.Three), new GamepadInput(PlayerIndex.Four)
         };
 
-        private static Color[] colors = {Color.Blue, Color.Red, Color.Yellow, Color.Green};
+        private static Color[] colors = {Color.CornflowerBlue, Color.Red, Color.Yellow, Color.Green};
 
         private static string[] names = {"Blue", "Red", "Yellow", "Green"};
         #endregion Static Attributes
@@ -98,7 +98,7 @@ namespace BattlemageArena.GameLogic.Screens
             if (!_gameEnded)
             {
                 // Check if someone won.
-                var players = _entities.OfType<Player>();
+                var players = _entities.OfType<Player>().Where( pl => !pl.Dead);
                 int count = players.Count();
                 if (count <= 1)
                 {

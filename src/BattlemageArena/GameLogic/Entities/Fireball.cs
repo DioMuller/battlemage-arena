@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using BattlemageArena.Core.Entities;
 using BattlemageArena.Core.Sprites;
 using BattlemageArena.GameLogic.Screens;
@@ -71,7 +72,7 @@ namespace BattlemageArena.GameLogic.Entities
             }
             
             // Checks if collides with player of other team
-            IEnumerable<Player> collisions = _level.GetCollisions<Player>(bbox);
+            IEnumerable<Player> collisions = _level.GetCollisions<Player>(bbox).Where( p => !p.Dead);
 
             foreach (Player player in collisions)
             {

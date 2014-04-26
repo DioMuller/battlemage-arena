@@ -54,6 +54,8 @@ namespace BattlemageArena.GameLogic.Entities
         private SoundEffect _fireballSfx;
         private SoundEffect _deathSfx;
         private SoundEffect _hitSfx;
+
+        private float _dyingTime = 0.0f;
         #endregion
 
         #region Properties
@@ -63,6 +65,8 @@ namespace BattlemageArena.GameLogic.Entities
         public float MovementSpeed { get; set; }
 
         public string Name { get; set; }
+
+        public bool Dead { get; set; }
         #endregion Properties
 
         #region Constructors
@@ -91,14 +95,16 @@ namespace BattlemageArena.GameLogic.Entities
             Sprite.Animations.Add(new Animation("fireball_left", 5, 0, 6));
 
             Sprite.Animations.Add(new Animation("dying", 8, 0, 5));
-            Sprite.Animations.Add(new Animation("dead", 8, 0, 5));
+            Sprite.Animations.Add(new Animation("dead", 8, 5, 5));
 
             _currentDirection = Direction.Down;
             _level = level;
 
-            _delayTime = 0.0f;
+            _delayTime = 500.0f;
 
             _input = inputMethod;
+
+            Dead = false;
             
             //Player didn't set movement speed
             if (MovementSpeed < 0.0001f) MovementSpeed = 0.2f;
@@ -114,20 +120,31 @@ namespace BattlemageArena.GameLogic.Entities
         #region Methods
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
             #region Dying
+
+            if (Dead)
+            {
+                if (_dyingTime > 0.0f)
+                {
+                        _dyingTime -= gameTime.ElapsedGameTime.Milliseconds;
+                }
+                else
+                {
+                    Sprite.ChangeAnimation(9);
+                }
+                return;
+            }
+
             if (_health <= 0)
             {
-                _level.RemoveEntity(this);
+                Sprite.ChangeAnimation(8);
+                _dyingTime = 400.0f;
+                Dead = true;
                 _deathSfx.Play();
                 return;
             }
             #endregion Dying
-
-            #region Movement
-            Move(_input.LeftDirectional * gameTime.ElapsedGameTime.Milliseconds * MovementSpeed);
-            #endregion Movement
-
-            #region Shooting
 
             if (_delayTime > 0.0f)
             {
@@ -135,8 +152,17 @@ namespace BattlemageArena.GameLogic.Entities
             }
             else
             {
+
+                #region Movement
+
+                Move(_input.LeftDirectional*gameTime.ElapsedGameTime.Milliseconds*MovementSpeed);
+
+                #endregion Movement
+
+                #region Shooting
+
                 Sprite.ChangeAnimation((int) _currentDirection);
-                
+
                 if (_input.FaceButtonA == ButtonState.Pressed)
                 {
                     _level.AddEntity(new Fireball(_level, Position, Color, _currentDirection));
@@ -144,11 +170,9 @@ namespace BattlemageArena.GameLogic.Entities
                     Sprite.ChangeAnimation(4 + (int) _currentDirection);
                     _delayTime = 500.0f;
                 }
+
+                #endregion Shooting
             }
-
-            #endregion Shooting
-
-            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
