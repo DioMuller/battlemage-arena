@@ -40,12 +40,11 @@ namespace BattlemageArena.GameLogic.Entities
         /// </summary>
         private GenericInput _input;
 
-        /// <summary>
-        /// Has the player shot?
-        /// </summary>
-        private bool _shot;
-
         private int _health = 5;
+        /// <summary>
+        /// Shot delay time.
+        /// </summary>
+        private float _delayTime = 0.0f;
 
         private SpriteFont _font;
         private Vector2 _nameSize;
@@ -81,15 +80,23 @@ namespace BattlemageArena.GameLogic.Entities
 
             Color = color;
 
-            Sprite.Animations.Add(new Animation("walking_down", 0, 0, 3));
-            Sprite.Animations.Add(new Animation("walking_up", 0, 4, 7));
-            Sprite.Animations.Add(new Animation("walking_right", 1, 0, 3));
-            Sprite.Animations.Add(new Animation("walking_left", 1, 4, 7));
+            Sprite.Animations.Add(new Animation("walking_down", 2, 0, 8));
+            Sprite.Animations.Add(new Animation("walking_up", 0, 0, 8));
+            Sprite.Animations.Add(new Animation("walking_right", 3, 0, 8));
+            Sprite.Animations.Add(new Animation("walking_left", 1, 0, 8));
+
+            Sprite.Animations.Add(new Animation("fireball_down", 6, 0, 6));
+            Sprite.Animations.Add(new Animation("fireball_up", 4, 0, 6));
+            Sprite.Animations.Add(new Animation("fireball_right", 7, 0, 6));
+            Sprite.Animations.Add(new Animation("fireball_left", 5, 0, 6));
+
+            Sprite.Animations.Add(new Animation("dying", 8, 0, 5));
+            Sprite.Animations.Add(new Animation("dead", 8, 0, 5));
 
             _currentDirection = Direction.Down;
             _level = level;
 
-            _shot = false;
+            _delayTime = 0.0f;
 
             _input = inputMethod;
             
@@ -121,19 +128,24 @@ namespace BattlemageArena.GameLogic.Entities
             #endregion Movement
 
             #region Shooting
-            if (_input.FaceButtonA == ButtonState.Pressed)
+
+            if (_delayTime > 0.0f)
             {
-                if (!_shot)
-                {
-                    _level.AddEntity(new Fireball(_level, Position, Color, _currentDirection));
-                    _fireballSfx.Play();
-                    _shot = true;
-                }
+                _delayTime -= gameTime.ElapsedGameTime.Milliseconds;
             }
             else
             {
-                _shot = false;
+                Sprite.ChangeAnimation((int) _currentDirection);
+                
+                if (_input.FaceButtonA == ButtonState.Pressed)
+                {
+                    _level.AddEntity(new Fireball(_level, Position, Color, _currentDirection));
+                    _fireballSfx.Play();
+                    Sprite.ChangeAnimation(4 + (int) _currentDirection);
+                    _delayTime = 500.0f;
+                }
             }
+
             #endregion Shooting
 
             base.Update(gameTime);

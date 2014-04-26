@@ -97,6 +97,7 @@ namespace BattlemageArena
             _gameSong = GameContent.LoadContent<Song>("Music/Arena");
 
             MediaPlayer.Play(_titleSong);
+            MediaPlayer.IsRepeating = true;
         }
 
         /// <summary>
