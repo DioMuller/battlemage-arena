@@ -16,8 +16,10 @@ using Microsoft.Xna.Framework.Media;
 
 namespace BattlemageArena
 {
+    // TODO: Better screen change, add multiplayer, multiple states.
+
     /// <summary>
-    /// This is the main type for your game
+    /// Main Game is where the magic happens.
     /// </summary>
     public class GameMain : Microsoft.Xna.Framework.Game
     {
