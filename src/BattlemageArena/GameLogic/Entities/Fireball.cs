@@ -14,13 +14,13 @@ namespace BattlemageArena.GameLogic.Entities
     public class Fireball : Entity
     {
         #region Attributes
-        private Level _level;
+        private LocalLevel _level;
         private Vector2 _direction;
         private float _movementSpeed = 0.3f;
         #endregion Attributes
 
         #region Constructor
-        public Fireball(Level level, Vector2 position, Color color, Direction direction)
+        public Fireball(LocalLevel level, Vector2 position, Color color, Direction direction)
         {
             Sprite = new Sprite("Sprites/fireball", new Point(48, 48), 100);
             Sprite.Origin = new Vector2(24,24);

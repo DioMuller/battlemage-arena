@@ -88,11 +88,26 @@ namespace BattlemageArena.GameLogic.Screens
                 GameMain.PlayerCount = int.Parse(playersCount);
             };
 
-            _options.AddComponent(new Button("Start Game", () =>
+            _options.AddComponent(new Button("Search For Game", () =>
+            {
+                // TODO: Add network logic.
+                _showOptions = false;
+                GameMain.StartGame();
+            }));
+
+            _options.AddComponent(new Button("Host Game", () =>
+            {
+                // TODO: Add network logic.
+                _showOptions = false;
+                GameMain.StartGame();
+            }));
+
+            _options.AddComponent(new Button("Local Game", () =>
             {
                 _showOptions = false;
                 GameMain.StartGame();
             }));
+
             _options.Position = new Rectangle(30, 200, width - 60, height - 220);
             _showOptions = false;
             #endregion Options Initialization

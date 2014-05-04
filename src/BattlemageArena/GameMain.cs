@@ -32,7 +32,7 @@ namespace BattlemageArena
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private TitleScreen _title;
-        private Level _level;
+        private LocalLevel _level;
 
         private bool _gameRunning;
 
@@ -152,7 +152,7 @@ namespace BattlemageArena
 
         internal void Reset()
         {
-            _level = new Level("Images/arena", Width, Height, PlayerCount, UseKeyboard );
+            _level = new LocalLevel("Images/arena", Width, Height, PlayerCount, UseKeyboard );
         }
         #endregion Methods
 

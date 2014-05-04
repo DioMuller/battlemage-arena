@@ -12,42 +12,42 @@ using Microsoft.Xna.Framework.Input;
 
 namespace BattlemageArena.GameLogic.Screens
 {
-    public class Level
+    public class LocalLevel
     {
         #region Attributes
-        private Rectangle _bounds;
-        private Texture2D _background;
-        private SpriteFont _font;
-        private SpriteFont _winFont;
-        private List<Entity> _entities;
-        private Stack<Entity> _toAdd; 
-        private Stack<Entity> _toRemove;
+        protected Rectangle _bounds;
+        protected Texture2D _background;
+        protected SpriteFont _font;
+        protected SpriteFont _winFont;
 
-        private bool _gameEnded;
-        private Color _winnerColor;
-        private string _winnerText;
-        private Vector2 _textOrigin;
-        private Vector2 _screenCenter;
-        private float _winnerTimer;
+        protected List<Entity> _entities;
+        protected Stack<Entity> _toAdd;
+        protected Stack<Entity> _toRemove;
 
+        protected bool _gameEnded;
+        protected Color _winnerColor;
+        protected string _winnerText;
+        protected Vector2 _textOrigin;
+        protected Vector2 _screenCenter;
+        protected float _winnerTimer;
         #endregion Attributes
 
         #region Static Attributes
-        private static Vector2[] positions = { new Vector2(10, 10), new Vector2(820, 460), new Vector2(10, 460), new Vector2(820, 10) };
+        private static Vector2[] positions = { new Vector2(10, 10), new Vector2(820, 460), new Vector2(10, 460), new Vector2(820, 10), new Vector2(400, 10), new Vector2(400, 460), new Vector2(10, 230), new Vector2(820,230),     };
         private static GenericInput[] inputs =
         {
             new KeyboardInput(), new GamepadInput(PlayerIndex.One),
             new GamepadInput(PlayerIndex.Two), new GamepadInput(PlayerIndex.Three), new GamepadInput(PlayerIndex.Four)
         };
 
-        private static Color[] colors = {Color.CornflowerBlue, Color.Red, Color.Yellow, Color.Green};
+        private static Color[] colors = {Color.CornflowerBlue, Color.Red, Color.Yellow, Color.Green, Color.Pink, Color.Brown, Color.Gray, Color.Orange};
 
-        private static string[] names = {"Blue", "Red", "Yellow", "Green"};
+        private static string[] names = {"Blue", "Red", "Yellow", "Green", "Pink", "Brown", "Gray", "Orange"};
         #endregion Static Attributes
 
         #region Constructor
 
-        public Level(string background, int width, int height, int playerCount, bool useKeyboard)
+        public LocalLevel(string background, int width, int height, int playerCount, bool useKeyboard)
         {
             int diff = useKeyboard ? 0 : 1;
 
@@ -71,7 +71,7 @@ namespace BattlemageArena.GameLogic.Screens
 
             for (int i = 0; i < playerCount; i++)
             {
-                _entities.Add(new Player(this, positions[i], colors[i], inputs[i + diff], names[i]));
+                _entities.Add(new Player(this, positions[i], colors[i + 4], inputs[i + diff], names[i + 4]));
             }
         }
         #endregion Constructor

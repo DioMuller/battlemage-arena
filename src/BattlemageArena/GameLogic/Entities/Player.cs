@@ -33,7 +33,7 @@ namespace BattlemageArena.GameLogic.Entities
         /// <summary>
         /// Level where the player is playing.
         /// </summary>
-        private Level _level;
+        private LocalLevel _level;
 
         /// <summary>
         /// Input
@@ -70,7 +70,7 @@ namespace BattlemageArena.GameLogic.Entities
         #endregion Properties
 
         #region Constructors
-        public Player(Level level, Vector2 position, Color color, GenericInput inputMethod, string name)
+        public Player(LocalLevel level, Vector2 position, Color color, GenericInput inputMethod, string name)
         {
             Sprite = new Sprite("Sprites/mage", new Point(64, 64), 100);
             Sprite.Origin = new Vector2(32, 32);
