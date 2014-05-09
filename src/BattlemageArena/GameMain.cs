@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BattlemageArena.Core;
 using BattlemageArena.Core.Input;
+using BattlemageArena.GameLogic.Net;
 using BattlemageArena.GameLogic.Screens;
 using BattlemageArena.Core.Sprites;
 using BattlemageArena.GameLogic.Entities;
@@ -60,6 +61,8 @@ namespace BattlemageArena
 
             PlayerCount = 2;
             UseKeyboard = true;
+
+            Components.Add(new GamerServicesComponent(this));
         }
         #endregion Constructors
 
@@ -168,10 +171,13 @@ namespace BattlemageArena
 
         public static void StartGame()
         {
-            _instance.Reset();
-            _instance._gameRunning = true;
+            if( NetworkConnection.SignIn() )
+            {
+                _instance.Reset();
+                _instance._gameRunning = true;
 
-            MediaPlayer.Play(_instance._gameSong);
+                MediaPlayer.Play(_instance._gameSong);
+            }
         }
         #endregion Static Methods
     }
