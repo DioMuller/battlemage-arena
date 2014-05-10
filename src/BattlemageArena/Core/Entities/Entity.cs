@@ -37,6 +37,11 @@ namespace BattlemageArena.Core.Entities
         public string Tag { get; set; }
 
         /// <summary>
+        /// Contains all the entities behavior, that will be used during the entity's update logic.
+        /// </summary>
+        public List<Behavior> Behaviors { get; private set; }
+
+        /// <summary>
         /// Entity position.
         /// </summary>
         public Vector2 Position { get; set; }
@@ -71,17 +76,21 @@ namespace BattlemageArena.Core.Entities
             }
         }
 
-        public Vector2 Origin
-        {
-            get { return Sprite.Origin; }
-        }
-
         public Rectangle BoundingBox
         {
             get
             {
-                return new Rectangle((int) (Position.X - Origin.X), (int) (Position.Y - Origin.Y), (int)Size.X, (int) Size.Y);
+                return new Rectangle(Convert.ToInt32(Position.X - Sprite.Origin.X),
+                                     Convert.ToInt32(Position.Y - Sprite.Origin.Y),
+                                     Sprite.FrameSize.X,
+                                     Sprite.FrameSize.Y);
             }
+        }
+
+
+        public Vector2 Origin
+        {
+            get { return Sprite.Origin; }
         }
         #endregion Properties
 
@@ -91,6 +100,7 @@ namespace BattlemageArena.Core.Entities
         /// </summary>
         public Entity()
         {
+            Behaviors = new List<Behavior>();
             Children = new List<Entity>();
             _childrenToRemove = new Stack<Entity>();
 
@@ -112,7 +122,12 @@ namespace BattlemageArena.Core.Entities
                 Children.Remove(_childrenToRemove.Pop());
             }
 
-            foreach( Entity e in Children )
+            foreach (Behavior b in Behaviors)
+            {
+                if (b.IsActive) b.Update(gameTime);
+            }
+
+            foreach (Entity e in Children)
             {
                 e.Update(gameTime);
             }
@@ -139,11 +154,21 @@ namespace BattlemageArena.Core.Entities
                     e.Draw(gameTime, spriteBatch);
                 }
 
-                if( Color == Color.Transparent )
+                if (Color == Color.Transparent)
                 {
                     Color = Color.White;
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets behavior by type.
+        /// </summary>
+        /// <typeparam name="T">Behavior type</typeparam>
+        /// <returns>Behavior of type or null.</returns>
+        public T GetBehavior<T>() where T : Behavior
+        {
+            return Behaviors.OfType<T>().FirstOrDefault();
         }
 
         /// <summary>
