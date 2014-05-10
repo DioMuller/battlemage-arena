@@ -17,8 +17,6 @@ using Microsoft.Xna.Framework.Media;
 
 namespace BattlemageArena
 {
-    // TODO: Better screen change, add multiplayer, multiple states.
-
     /// <summary>
     /// Main Game is where the magic happens.
     /// </summary>
@@ -30,12 +28,14 @@ namespace BattlemageArena
         #endregion Const
 
         #region Attributes
-        private GraphicsDeviceManager _graphics;
+        private readonly GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private TitleScreen _title;
         private LocalLevel _level;
 
-        private bool _gameRunning;
+        private GameState _currentState;
+
+        private readonly NetworkConnection _connection;
 
         private Song _titleSong;
         private Song _gameSong;
@@ -57,7 +57,9 @@ namespace BattlemageArena
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             _instance = this;
-            _gameRunning = false;
+            _currentState = GameState.TitleScreen;
+
+            _connection = new NetworkConnection(this);
 
             PlayerCount = 2;
             UseKeyboard = true;
@@ -125,9 +127,15 @@ namespace BattlemageArena
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            if( _gameRunning ) _level.Update(gameTime);
-            else _title.Update(gameTime);
-            
+            switch (_currentState)
+            {
+                    case GameState.TitleScreen:
+                        _title.Update(gameTime);
+                        break;
+                    case GameState.PlayingLocal:
+                       _level.Update(gameTime);
+                       break;
+            }
 
             base.Update(gameTime);
         }
@@ -142,8 +150,15 @@ namespace BattlemageArena
 
             _spriteBatch.Begin();
 
-            if (_gameRunning) _level.Draw(gameTime, _spriteBatch);
-            else _title.Draw(gameTime, _spriteBatch);
+            switch (_currentState)
+            {
+                case GameState.TitleScreen:
+                    _title.Draw(gameTime, _spriteBatch);
+                    break;
+                case GameState.PlayingLocal:
+                    _level.Draw(gameTime, _spriteBatch);
+                    break;
+            }
 
             _spriteBatch.End();
 
@@ -164,17 +179,17 @@ namespace BattlemageArena
         public static void ResetGame()
         {
             _instance.Reset();
-            _instance._gameRunning = false;
+            _instance._currentState = GameState.TitleScreen;
 
             MediaPlayer.Play(_instance._titleSong);
         }
 
         public static void StartGame()
         {
-            if( NetworkConnection.SignIn() )
+            if( _instance._connection.SignIn() )
             {
                 _instance.Reset();
-                _instance._gameRunning = true;
+                _instance._currentState = GameState.PlayingLocal;
 
                 MediaPlayer.Play(_instance._gameSong);
             }

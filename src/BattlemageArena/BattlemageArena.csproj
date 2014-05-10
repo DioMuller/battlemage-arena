@@ -80,7 +80,7 @@
     <Compile Include="Core\Input\GenericInput.cs" />
     <Compile Include="Core\Input\KeyboardInput.cs" />
     <Compile Include="Core\Input\MultipleInput.cs" />
-    <Compile Include="GameLogic\Net\GameType.cs" />
+    <Compile Include="GameLogic\Net\GameState.cs" />
     <Compile Include="GameLogic\Net\NetworkConnection.cs" />
     <Compile Include="GameLogic\Screens\ClientLevel.cs" />
     <Compile Include="GameLogic\Screens\LocalLevel.cs" />

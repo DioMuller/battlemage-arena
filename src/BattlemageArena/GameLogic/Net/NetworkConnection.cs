@@ -9,9 +9,21 @@ namespace BattlemageArena.GameLogic.Net
 {
     class NetworkConnection
     {
-        private static NetworkSession _session;
+        #region Attributes
+        private NetworkSession _session;
+        private GameMain _game;
+        #endregion Attributes
 
-        public static bool SignIn()
+        #region Constructors
+
+        public NetworkConnection(GameMain game)
+        {
+            _game = game;
+        }
+        #endregion Constructors
+
+        #region Methods
+        public bool SignIn()
         {
             if (Gamer.SignedInGamers.Count == 0)
             {
@@ -30,7 +42,7 @@ namespace BattlemageArena.GameLogic.Net
             }
         }
 
-        public static void CreateSession()
+        public void CreateSession()
         {
             _session = NetworkSession.Create(NetworkSessionType.SystemLink, 1, 2);
             _session.GamerJoined += new EventHandler<GamerJoinedEventArgs>(Host_GamerJoined);
@@ -39,7 +51,7 @@ namespace BattlemageArena.GameLogic.Net
             // TODO: Change game state to WAIT FOR PLAYERS
         }
 
-        public static void SearchForGame()
+        public void SearchForGame()
         {
             AvailableNetworkSessionCollection sessions = NetworkSession.Find(NetworkSessionType.SystemLink, 1, null);
             if (sessions.Count > 0)
@@ -51,10 +63,10 @@ namespace BattlemageArena.GameLogic.Net
                 //_gameState = GameState.PlayingAsPlayer;
             } 
         }
+        #endregion Methods
 
         #region Event Handlers
-
-        static void Host_GamerJoined(object sender, GamerJoinedEventArgs e)
+        void Host_GamerJoined(object sender, GamerJoinedEventArgs e)
         {
             if (_session.RemoteGamers.Count <= 1)
             {
@@ -63,13 +75,13 @@ namespace BattlemageArena.GameLogic.Net
             }
         }
 
-        static void Host_GamerLeft(object sender, GamerLeftEventArgs e)
+        void Host_GamerLeft(object sender, GamerLeftEventArgs e)
         {
             _session.Dispose(); 
             //EndGame();
         }
 
-        static void Client_GamerLeft(object sender, GamerLeftEventArgs e)
+        void Client_GamerLeft(object sender, GamerLeftEventArgs e)
         {
             _session.Dispose(); 
             //EndGame();
