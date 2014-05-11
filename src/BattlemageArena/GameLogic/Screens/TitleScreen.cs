@@ -6,6 +6,7 @@ using BattlemageArena.Core;
 using BattlemageArena.Core.Input;
 using BattlemageArena.Core.Sprites;
 using BattlemageArena.GameLogic.Entities;
+using BattlemageArena.GameLogic.Net;
 using BattlemageArena.GUI.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -76,6 +77,10 @@ namespace BattlemageArena.GameLogic.Screens
             players.AddOption("2");
             players.AddOption("3");
             players.AddOption("4");
+            players.AddOption("5*");
+            players.AddOption("6*");
+            players.AddOption("7*");
+            players.AddOption("8*");
             players.SelectOption(GameMain.PlayerCount.ToString());
             _options.AddComponent(players);
 
@@ -85,27 +90,30 @@ namespace BattlemageArena.GameLogic.Screens
                 string playersCount = _options.GetValue("Players");
 
                 GameMain.UseKeyboard = (useKeyboard == "Yes");
-                GameMain.PlayerCount = int.Parse(playersCount);
+                GameMain.PlayerCount = int.Parse(playersCount.Replace('*','\0'));
+
+                if (GameMain.PlayerCount > 4) _options.GetComponent<Button>("Local Game").Visible = false;
+                else _options.GetComponent<Button>("Local Game").Visible = true;
             };
 
             _options.AddComponent(new Button("Search For Game", () =>
             {
                 // TODO: Add network logic.
                 _showOptions = false;
-                GameMain.StartGame();
+                GameMain.ChangeState(GameState.SearchingGame);
             }));
 
             _options.AddComponent(new Button("Host Game", () =>
             {
                 // TODO: Add network logic.
                 _showOptions = false;
-                GameMain.StartGame();
+                GameMain.ChangeState(GameState.WaitingPlayers);
             }));
 
             _options.AddComponent(new Button("Local Game", () =>
             {
                 _showOptions = false;
-                GameMain.StartGame();
+                GameMain.ChangeState(GameState.PlayingLocal);
             }));
 
             _options.Position = new Rectangle(30, 200, width - 60, height - 220);

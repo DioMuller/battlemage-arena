@@ -6,6 +6,7 @@ using BattlemageArena.Core;
 using BattlemageArena.Core.Entities;
 using BattlemageArena.Core.Input;
 using BattlemageArena.GameLogic.Entities;
+using BattlemageArena.GameLogic.Net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -126,7 +127,7 @@ namespace BattlemageArena.GameLogic.Screens
 
                 if (_winnerTimer < 0.0f)
                 {
-                    GameMain.ResetGame();
+                    GameMain.ChangeState(GameState.TitleScreen);
                 }
             }
             #endregion Endgame Control

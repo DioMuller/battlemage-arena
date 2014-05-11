@@ -5,10 +5,11 @@ using System.Text;
 
 namespace BattlemageArena.GameLogic.Net
 {
-    enum GameState
+    public enum GameState
     {
         TitleScreen,
         WaitingPlayers,
+        SearchingGame,
         PlayingLocal,
         PlayingClient,
         PlayingHost,

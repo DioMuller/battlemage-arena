@@ -172,27 +172,34 @@ namespace BattlemageArena
         {
             _level = new LocalLevel("Images/arena", Width, Height, PlayerCount, UseKeyboard );
         }
+
+        private void ChangeGameState(GameState state)
+        {
+            switch (state)
+            {
+                case GameState.TitleScreen:
+                    Reset();
+                    _currentState = GameState.TitleScreen;
+                    MediaPlayer.Play(_titleSong);
+                    break;
+                case GameState.PlayingLocal:
+                    if (_connection.SignIn())
+                    {
+                        Reset();
+                        _currentState = GameState.PlayingLocal;
+                        MediaPlayer.Play(_gameSong);
+                    }
+                    break;
+
+            }
+        }
         #endregion Methods
 
         #region Static Methods
 
-        public static void ResetGame()
+        public static void ChangeState(GameState state)
         {
-            _instance.Reset();
-            _instance._currentState = GameState.TitleScreen;
-
-            MediaPlayer.Play(_instance._titleSong);
-        }
-
-        public static void StartGame()
-        {
-            if( _instance._connection.SignIn() )
-            {
-                _instance.Reset();
-                _instance._currentState = GameState.PlayingLocal;
-
-                MediaPlayer.Play(_instance._gameSong);
-            }
+            _instance.ChangeGameState(state);
         }
         #endregion Static Methods
     }

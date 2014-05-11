@@ -47,6 +47,17 @@ namespace BattlemageArena.GUI.Components
         /// Component identifier.
         /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// Is the component visible?
+        /// </summary>
+        public bool Drawable { get; set; }
+
+        public bool Visible
+        {
+            get { return Drawable && Selectable; }
+            set { Drawable = Selectable = value; }
+        }
         #endregion Properties
 
         #region Delegates
@@ -63,7 +74,7 @@ namespace BattlemageArena.GUI.Components
         {
             SelectedTexture = GameContent.LoadContent<Texture2D>("images/menuselected");
             Name = name;
-            Selectable = true;
+            Visible = true;
         }
         #endregion Constructor
         

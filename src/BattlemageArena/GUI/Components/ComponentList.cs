@@ -139,9 +139,7 @@ namespace BattlemageArena.GUI.Components
                     if( ValueChanged != null ) ValueChanged();
 
                     _selectSfx.Play();
-                }
-
-                
+                } 
             }
             else
             {
@@ -161,7 +159,8 @@ namespace BattlemageArena.GUI.Components
 
             for (int i = _currentStart; i < (_currentStart + _componentsOnScreen); i++ )
             {
-                _components[i].Draw(spriteBatch, transparency);
+                if( _components[i].Drawable )
+                   _components[i].Draw(spriteBatch, transparency);
             }
         }
 
@@ -239,9 +238,12 @@ namespace BattlemageArena.GUI.Components
         {
             if (_components.Count > 0 && _selectedOption < (_components.Count - 1) )
             {
-                _components[_selectedOption].Selected = false;
-                _selectedOption++;
-                _components[_selectedOption].Selected = true;
+                if (_components[_selectedOption + 1].Selectable)
+                {
+                    _components[_selectedOption].Selected = false;
+                    _selectedOption++;
+                    _components[_selectedOption].Selected = true;
+                }
             }
 
             if (_selectedOption >= (_currentStart + _componentsOnScreen) )
@@ -258,11 +260,16 @@ namespace BattlemageArena.GUI.Components
         /// <returns>value</returns>
         public string GetValue(string name)
         {
-            Component comp = _components.Where((c) => c.Name == name).FirstOrDefault();
+            Component comp = _components.FirstOrDefault((c) => c.Name == name);
 
             if( comp == null ) return String.Empty;
             if( comp is SelectionBox ) return ((SelectionBox) comp).SelectedOption; 
             else return comp.Name;
+        }
+
+        public T GetComponent<T>(string name) where T : Component
+        {
+            return _components.OfType<T>().FirstOrDefault((c) => c.Name == name);
         }
         #endregion Methods
     }
