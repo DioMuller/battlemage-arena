@@ -6,6 +6,7 @@ using BattlemageArena.Core;
 using BattlemageArena.Core.Entities;
 using BattlemageArena.Core.Input;
 using BattlemageArena.Core.Sprites;
+using BattlemageArena.GameLogic.Behaviors;
 using BattlemageArena.GameLogic.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -33,25 +34,16 @@ namespace BattlemageArena.GameLogic.Entities
         /// <summary>
         /// Level where the player is playing.
         /// </summary>
-        private LocalLevel _level;
-
-        /// <summary>
-        /// Input
-        /// </summary>
-        private GenericInput _input;
+        private Level _level;
 
         private int _health = 5;
-        /// <summary>
-        /// Shot delay time.
-        /// </summary>
-        private float _delayTime = 0.0f;
+
 
         private SpriteFont _font;
         private Vector2 _nameSize;
         private Vector2 _healthSize;
         private Vector2 _textDiff;
 
-        private SoundEffect _fireballSfx;
         private SoundEffect _deathSfx;
         private SoundEffect _hitSfx;
 
@@ -67,10 +59,14 @@ namespace BattlemageArena.GameLogic.Entities
         public string Name { get; set; }
 
         public bool Dead { get; set; }
+
+        public Direction Direction { get { return _currentDirection; } }
+
+        public int DirectionIndex { get { return (int) _currentDirection; } }
         #endregion Properties
 
         #region Constructors
-        public Player(LocalLevel level, Vector2 position, Color color, GenericInput inputMethod, string name)
+        public Player(Level level, Vector2 position, Color color, GenericInput inputMethod, string name)
         {
             Sprite = new Sprite("Sprites/mage", new Point(64, 64), 100);
             Sprite.Origin = new Vector2(32, 32);
@@ -100,18 +96,15 @@ namespace BattlemageArena.GameLogic.Entities
             _currentDirection = Direction.Down;
             _level = level;
 
-            _delayTime = 500.0f;
-
-            _input = inputMethod;
-
             Dead = false;
             
             //Player didn't set movement speed
             if (MovementSpeed < 0.0001f) MovementSpeed = 0.2f;
 
             _deathSfx = GameContent.LoadContent<SoundEffect>("SFX/Death");
-            _fireballSfx = GameContent.LoadContent<SoundEffect>("SFX/Fireball");
             _hitSfx = GameContent.LoadContent<SoundEffect>("SFX/Explosion");
+
+            Behaviors.Add(new ControllableBehavior(this, inputMethod));
 
             Sprite.ChangeAnimation(0);
         }
@@ -121,6 +114,7 @@ namespace BattlemageArena.GameLogic.Entities
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
             #region Dying
 
             if (Dead)
@@ -145,34 +139,6 @@ namespace BattlemageArena.GameLogic.Entities
                 return;
             }
             #endregion Dying
-
-            if (_delayTime > 0.0f)
-            {
-                _delayTime -= gameTime.ElapsedGameTime.Milliseconds;
-            }
-            else
-            {
-
-                #region Movement
-
-                Move(_input.LeftDirectional*gameTime.ElapsedGameTime.Milliseconds*MovementSpeed);
-
-                #endregion Movement
-
-                #region Shooting
-
-                Sprite.ChangeAnimation((int) _currentDirection);
-
-                if (_input.FaceButtonA == ButtonState.Pressed)
-                {
-                    _level.AddEntity(new Fireball(_level, Position, Color, _currentDirection));
-                    _fireballSfx.Play();
-                    Sprite.ChangeAnimation(4 + (int) _currentDirection);
-                    _delayTime = 500.0f;
-                }
-
-                #endregion Shooting
-            }
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -185,7 +151,9 @@ namespace BattlemageArena.GameLogic.Entities
 
         public void Move(Vector2 movement)
         {
-            Vector2 newPosition = (Position) + movement;
+            if (Dead || _health <= 0) return;
+
+            Vector2 newPosition = (Position) + (movement * MovementSpeed);
 
             if (_level.IsOnBounds(new Rectangle((int) (newPosition.X - Origin.X), (int) (newPosition.Y - Origin.Y),
                                     (int) Size.X, (int) Size.Y)))
@@ -216,6 +184,10 @@ namespace BattlemageArena.GameLogic.Entities
             }
         }
 
+        public void ChangeAnimation(int index)
+        {
+            Sprite.ChangeAnimation(index);
+        }
         public void Hurt()
         {
             _health--;

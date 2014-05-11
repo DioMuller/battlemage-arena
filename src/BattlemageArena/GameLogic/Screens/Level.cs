@@ -8,12 +8,13 @@ using BattlemageArena.Core.Input;
 using BattlemageArena.GameLogic.Entities;
 using BattlemageArena.GameLogic.Net;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace BattlemageArena.GameLogic.Screens
 {
-    public class LocalLevel
+    public class Level
     {
         #region Attributes
         protected Rectangle _bounds;
@@ -31,6 +32,8 @@ namespace BattlemageArena.GameLogic.Screens
         protected Vector2 _textOrigin;
         protected Vector2 _screenCenter;
         protected float _winnerTimer;
+
+        private SoundEffect _fireballSfx;
         #endregion Attributes
 
         #region Static Attributes
@@ -48,7 +51,7 @@ namespace BattlemageArena.GameLogic.Screens
 
         #region Constructor
 
-        public LocalLevel(string background, int width, int height, int playerCount, bool useKeyboard)
+        public Level(string background, int width, int height, int playerCount, bool useKeyboard)
         {
             int diff = useKeyboard ? 0 : 1;
 
@@ -66,13 +69,15 @@ namespace BattlemageArena.GameLogic.Screens
             _textOrigin = Vector2.Zero;
             _screenCenter = new Vector2(width / 2.0f, height / 2.0f);
 
+            _fireballSfx = GameContent.LoadContent<SoundEffect>("SFX/Fireball");
+
             _gameEnded = false;
             _winnerColor = Color.Black;
             _winnerText = String.Empty;
 
             for (int i = 0; i < playerCount; i++)
             {
-                _entities.Add(new Player(this, positions[i], colors[i + 4], inputs[i + diff], names[i + 4]));
+                _entities.Add(new Player(this, positions[i], colors[i], inputs[i + diff], names[i]));
             }
         }
         #endregion Constructor
@@ -190,5 +195,14 @@ namespace BattlemageArena.GameLogic.Screens
             return true;
         }
         #endregion Helper Methods
+
+        #region Game Specific Methods
+
+        public void AddFireball(Vector2 position, Color color, Direction direction)
+        {
+            AddEntity(new Fireball(this, position, color, direction));
+            _fireballSfx.Play();
+        }
+        #endregion Game Specific Methods
     }
 }

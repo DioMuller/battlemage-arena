@@ -31,7 +31,7 @@ namespace BattlemageArena
         private readonly GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private TitleScreen _title;
-        private LocalLevel _level;
+        private Level _level;
 
         private GameState _currentState;
 
@@ -49,6 +49,8 @@ namespace BattlemageArena
         #region Properties
         public static int PlayerCount { get; set; }
         public static bool UseKeyboard { get; set; }
+
+        public static Level CurrentLevel { get { return _instance._level; } }
         #endregion Properties
 
         #region Constructors
@@ -170,7 +172,7 @@ namespace BattlemageArena
 
         internal void Reset()
         {
-            _level = new LocalLevel("Images/arena", Width, Height, PlayerCount, UseKeyboard );
+            _level = new Level("Images/arena", Width, Height, PlayerCount, UseKeyboard );
         }
 
         private void ChangeGameState(GameState state)
@@ -183,14 +185,10 @@ namespace BattlemageArena
                     MediaPlayer.Play(_titleSong);
                     break;
                 case GameState.PlayingLocal:
-                    if (_connection.SignIn())
-                    {
                         Reset();
                         _currentState = GameState.PlayingLocal;
                         MediaPlayer.Play(_gameSong);
-                    }
                     break;
-
             }
         }
         #endregion Methods

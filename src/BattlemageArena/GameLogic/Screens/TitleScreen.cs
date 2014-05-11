@@ -77,10 +77,10 @@ namespace BattlemageArena.GameLogic.Screens
             players.AddOption("2");
             players.AddOption("3");
             players.AddOption("4");
-            players.AddOption("5*");
-            players.AddOption("6*");
-            players.AddOption("7*");
-            players.AddOption("8*");
+            players.AddOption("5");
+            players.AddOption("6");
+            players.AddOption("7");
+            players.AddOption("8");
             players.SelectOption(GameMain.PlayerCount.ToString());
             _options.AddComponent(players);
 

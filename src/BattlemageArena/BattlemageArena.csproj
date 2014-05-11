@@ -81,10 +81,10 @@
     <Compile Include="Core\Input\GenericInput.cs" />
     <Compile Include="Core\Input\KeyboardInput.cs" />
     <Compile Include="Core\Input\MultipleInput.cs" />
+    <Compile Include="GameLogic\Behaviors\ControllableBehavior.cs" />
     <Compile Include="GameLogic\Net\GameState.cs" />
     <Compile Include="GameLogic\Net\NetworkConnection.cs" />
-    <Compile Include="GameLogic\Screens\ClientLevel.cs" />
-    <Compile Include="GameLogic\Screens\LocalLevel.cs" />
+    <Compile Include="GameLogic\Screens\Level.cs" />
     <Compile Include="Core\Sprites\Animation.cs" />
     <Compile Include="Core\Sprites\Frame.cs" />
     <Compile Include="Core\Sprites\Sprite.cs" />
@@ -133,9 +133,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="GameLogic\Behaviors\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--
