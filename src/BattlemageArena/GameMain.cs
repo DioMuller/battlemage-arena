@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Net;
 
 namespace BattlemageArena
 {
@@ -51,6 +52,15 @@ namespace BattlemageArena
         public static bool UseKeyboard { get; set; }
 
         public static Level CurrentLevel { get { return _instance._level; } }
+
+        public static NetworkConnection Connection
+        {
+            get { return _instance._connection; }
+        }
+
+        public static GameState CurrentState { get { return _instance._currentState; } }
+
+        public static NetworkSession CurrentSession { get { return _instance._connection.Session; } }
         #endregion Properties
 
         #region Constructors

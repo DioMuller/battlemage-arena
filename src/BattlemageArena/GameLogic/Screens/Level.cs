@@ -5,6 +5,7 @@ using System.Text;
 using BattlemageArena.Core;
 using BattlemageArena.Core.Entities;
 using BattlemageArena.Core.Input;
+using BattlemageArena.GameLogic.Behaviors;
 using BattlemageArena.GameLogic.Entities;
 using BattlemageArena.GameLogic.Net;
 using Microsoft.Xna.Framework;
@@ -48,6 +49,11 @@ namespace BattlemageArena.GameLogic.Screens
 
         private static string[] names = {"Blue", "Red", "Yellow", "Green", "Pink", "Brown", "Gray", "Orange"};
         #endregion Static Attributes
+
+        #region Properties
+
+        public NetworkBehavior NetController { get; set; }
+        #endregion Properties
 
         #region Constructor
 
