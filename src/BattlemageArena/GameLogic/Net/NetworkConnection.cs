@@ -39,24 +39,24 @@ namespace BattlemageArena.GameLogic.Net
         #endregion Constructors
 
         #region Methods
-        public bool SignIn()
-        {
-            if (Gamer.SignedInGamers.Count == 0)
-            {
-                if (Guide.IsVisible == false)
-                {
-                    Guide.ShowSignIn(1, false);
+        //public bool SignIn()
+        //{
+        //    if (Gamer.SignedInGamers.Count == 0)
+        //    {
+        //        if (Guide.IsVisible == false)
+        //        {
+        //            Guide.ShowSignIn(1, false);
 
-                    return (Gamer.SignedInGamers.Count != 0);
-                }
+        //            return (Gamer.SignedInGamers.Count != 0);
+        //        }
 
-                return true;
-            }
-            else
-            {
-                return true;
-            }
-        }
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return true;
+        //    }
+        //}
 
         public void CreateSession()
         {
