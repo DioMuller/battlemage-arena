@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using BattlemageArena.GameLogic.Behaviors;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Net;
@@ -18,6 +19,7 @@ namespace BattlemageArena.GameLogic.Net
         private PacketReader _reader;
         private PacketWriter _writer;
         private int _counter;
+        private List<NetworkBehavior> _behaviors; 
         #endregion Attributes
 
         #region Properties
@@ -35,28 +37,12 @@ namespace BattlemageArena.GameLogic.Net
 
             _reader = new PacketReader();
             _writer = new PacketWriter();
+
+            _behaviors = new List<NetworkBehavior>();
         }
         #endregion Constructors
 
         #region Methods
-        //public bool SignIn()
-        //{
-        //    if (Gamer.SignedInGamers.Count == 0)
-        //    {
-        //        if (Guide.IsVisible == false)
-        //        {
-        //            Guide.ShowSignIn(1, false);
-
-        //            return (Gamer.SignedInGamers.Count != 0);
-        //        }
-
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return true;
-        //    }
-        //}
 
         public void CreateSession()
         {
@@ -89,6 +75,11 @@ namespace BattlemageArena.GameLogic.Net
             if( !_session.IsHost ) throw new Exception("Only hosts can generate unique values.");
                 
             return ++_counter;
+        }
+
+        public void AddBehavior(NetworkBehavior behavior)
+        {
+            _behaviors.Add(behavior);
         }
         #endregion Methods
 
@@ -127,21 +118,17 @@ namespace BattlemageArena.GameLogic.Net
         #region Game Cycle
         public void Update(GameTime gameTime)
         {
-            if (_session.IsHost)
+            while (LocalHost.IsDataAvailable)
             {
-                while (LocalHost.IsDataAvailable)
+                NetworkGamer sender;
+                LocalHost.ReceiveData(_reader, out sender);
+                string type = _reader.ReadString();
+                int id = _reader.ReadInt32();
+                NetworkBehavior net = _behaviors.FirstOrDefault((b) => b.Id == id);
+
+                if (net != null)
                 {
-                    NetworkGamer sender;
-                    LocalHost.ReceiveData(_reader, out sender);
-                    string type = _reader.ReadString();
-                    int id = _reader.ReadInt32();
-
-                    // Simple anti-cheating measure.
-                    if (id == sender.Id)
-                    {
-                        
-                    }
-
+                    net.ReceiveData(_reader);
                 }
             }
         }

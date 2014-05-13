@@ -40,6 +40,8 @@ namespace BattlemageArena.GameLogic.Behaviors
             _player = GameMain.CurrentSession.LocalGamers[0];
 
             _timeBetween = _timeElapsed = timeBetween;
+
+            GameMain.Connection.AddBehavior(this);
         }
         #endregion Constructor
 

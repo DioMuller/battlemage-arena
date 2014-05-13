@@ -68,6 +68,8 @@ namespace BattlemageArena.Core.Entities
 
         public Color Color { get; set; }
 
+        public bool Removed { get; set; }
+
         public Vector2 Size
         {
             get

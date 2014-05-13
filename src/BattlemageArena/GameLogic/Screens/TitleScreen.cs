@@ -40,33 +40,37 @@ namespace BattlemageArena.GameLogic.Screens
         #endregion Attributes
 
         #region Constructor
+
         public TitleScreen(string background, int width, int height)
         {
             #region Title Screen Assets initialization
+
             _bounds = new Rectangle(0, 0, width, height);
             _background = GameContent.LoadContent<Texture2D>(background);
             _logo = GameContent.LoadContent<Texture2D>("Images/Logo");
             _font = GameContent.LoadContent<SpriteFont>("Fonts/SmallFont");
 
-            Vector2 bg_center = new Vector2(_logo.Width / 2.0f, _logo.Height / 2.0f);
-            Vector2 screen_center = new Vector2(width / 2.0f, height / 2.0f);
-            _titlePosition = new Rectangle( (int) (screen_center.X - bg_center.X), 
-                                            (int) (screen_center.Y * 0.5 - bg_center.Y),
-                                            (int)(_logo.Width),
-                                            (int)(_logo.Height));
+            Vector2 bg_center = new Vector2(_logo.Width/2.0f, _logo.Height/2.0f);
+            Vector2 screen_center = new Vector2(width/2.0f, height/2.0f);
+            _titlePosition = new Rectangle((int) (screen_center.X - bg_center.X),
+                (int) (screen_center.Y*0.5 - bg_center.Y),
+                (int) (_logo.Width),
+                (int) (_logo.Height));
 
             _startMessage = "Press START or ENTER to start the game";
             Vector2 startSize = _font.MeasureString(_startMessage);
-            _startOrigin = new Vector2(startSize.X / 2, startSize.Y / 2);
-            _startPosition = new Vector2(screen_center.X, screen_center.Y * 1.7f);
+            _startOrigin = new Vector2(startSize.X/2, startSize.Y/2);
+            _startPosition = new Vector2(screen_center.X, screen_center.Y*1.7f);
 
             _transparency = 0.9f;
             _transparencyDiff = 0.001f;
+
             #endregion Title Screen Assets initialization
 
             #region Options Initialization
+
             _options = new ComponentList();
-            
+
             SelectionBox controller = new SelectionBox("Use Keyboard?");
             controller.AddOption("Yes");
             controller.AddOption("No");
@@ -90,11 +94,25 @@ namespace BattlemageArena.GameLogic.Screens
                 string playersCount = _options.GetValue("Players");
 
                 GameMain.UseKeyboard = (useKeyboard == "Yes");
-                GameMain.PlayerCount = int.Parse(playersCount.Replace('*','\0'));
+                GameMain.PlayerCount = int.Parse(playersCount.Replace('*', '\0'));
 
-                if (GameMain.PlayerCount > 4) _options.GetComponent<Button>("Local Game").Visible = false;
-                else _options.GetComponent<Button>("Local Game").Visible = true;
+                if (GameMain.PlayerCount > 2)
+                {
+                    _options.GetComponent<Button>("Search For Game").Visible = false;
+                    _options.GetComponent<Button>("Host Game").Visible = false;
+                }
+                else
+                {
+                    _options.GetComponent<Button>("Search For Game").Visible = true;
+                    _options.GetComponent<Button>("Host Game").Visible = true;
+                }
             };
+
+            _options.AddComponent(new Button("Play Local", () =>
+            {
+                _showOptions = false;
+                GameMain.ChangeState(GameState.PlayingLocal);
+            }));
 
             _options.AddComponent(new Button("Search For Game", () =>
             {
@@ -108,12 +126,6 @@ namespace BattlemageArena.GameLogic.Screens
                 // TODO: Add network logic.
                 _showOptions = false;
                 GameMain.ChangeState(GameState.WaitingPlayers);
-            }));
-
-            _options.AddComponent(new Button("Local Game", () =>
-            {
-                _showOptions = false;
-                GameMain.ChangeState(GameState.PlayingLocal);
             }));
 
             _options.Position = new Rectangle(30, 200, width - 60, height - 220);

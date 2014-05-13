@@ -36,9 +36,6 @@ namespace BattlemageArena.GameLogic.Entities
         /// </summary>
         private Level _level;
 
-        private int _health = 5;
-
-
         private SpriteFont _font;
         private Vector2 _nameSize;
         private Vector2 _healthSize;
@@ -60,7 +57,13 @@ namespace BattlemageArena.GameLogic.Entities
 
         public bool Dead { get; set; }
 
-        public Direction Direction { get { return _currentDirection; } }
+        public int Health { get; set; }
+
+        public Direction Direction
+        {
+            get { return _currentDirection; }
+            set { _currentDirection = value; }
+        }
 
         public int DirectionIndex { get { return (int) _currentDirection; } }
         #endregion Properties
@@ -73,9 +76,11 @@ namespace BattlemageArena.GameLogic.Entities
             Position = position + Origin;
             Name = name;
 
+            Health = 5;
+
             _font = GameContent.LoadContent<SpriteFont>("Fonts/SmallFont");
             _nameSize = _font.MeasureString(Name) / 2;
-            _healthSize = _font.MeasureString(_health.ToString()) / 2;
+            _healthSize = _font.MeasureString(Health.ToString()) / 2;
             _textDiff = Vector2.UnitY * (Size.Y / 2);
 
             Color = color;
@@ -130,7 +135,7 @@ namespace BattlemageArena.GameLogic.Entities
                 return;
             }
 
-            if (_health <= 0)
+            if (Health <= 0)
             {
                 Sprite.ChangeAnimation(8);
                 _dyingTime = 400.0f;
@@ -146,12 +151,12 @@ namespace BattlemageArena.GameLogic.Entities
             base.Draw(gameTime, spriteBatch);
 
             spriteBatch.DrawString(_font, Name, Position - _textDiff, Color, 0.0f, _nameSize, Vector2.One, SpriteEffects.None, 1.0f );
-            spriteBatch.DrawString(_font, _health.ToString(), Position + _textDiff, Color, 0.0f, _healthSize, Vector2.One, SpriteEffects.None, 1.0f);
+            spriteBatch.DrawString(_font, Health.ToString(), Position + _textDiff, Color, 0.0f, _healthSize, Vector2.One, SpriteEffects.None, 1.0f);
         }
 
         public void Move(Vector2 movement)
         {
-            if (Dead || _health <= 0) return;
+            if (Dead || Health <= 0) return;
 
             Vector2 newPosition = (Position) + (movement * MovementSpeed);
 
@@ -190,7 +195,7 @@ namespace BattlemageArena.GameLogic.Entities
         }
         public void Hurt()
         {
-            _health--;
+            Health--;
             _hitSfx.Play();
         }
         #endregion Methods

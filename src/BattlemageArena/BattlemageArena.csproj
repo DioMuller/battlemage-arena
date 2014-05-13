@@ -82,7 +82,9 @@
     <Compile Include="Core\Input\KeyboardInput.cs" />
     <Compile Include="Core\Input\MultipleInput.cs" />
     <Compile Include="GameLogic\Behaviors\ControllableBehavior.cs" />
-    <Compile Include="Core\Entities\NetworkBehavior.cs" />
+    <Compile Include="GameLogic\Behaviors\NetworkBehavior.cs" />
+    <Compile Include="GameLogic\Behaviors\NetFireballBehavior.cs" />
+    <Compile Include="GameLogic\Behaviors\NetPlayerBehavior.cs" />
     <Compile Include="GameLogic\Net\GameState.cs" />
     <Compile Include="GameLogic\Net\NetworkConnection.cs" />
     <Compile Include="GameLogic\Screens\Level.cs" />
