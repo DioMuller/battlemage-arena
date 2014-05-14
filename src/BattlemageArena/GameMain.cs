@@ -204,11 +204,13 @@ namespace BattlemageArena
                     MediaPlayer.Play(_gameSong);
                     break;
                 case GameState.WaitingPlayers:
-                    _connection = new NetworkConnection(this);
+                    break;
+                case GameState.CreatingHost:
+                    _connection.Reinitialize();
                     _connection.CreateSession();
                     break;
                 case GameState.SearchingGame:
-                    _connection = new NetworkConnection(this);
+                    _connection.Reinitialize();
                     _connection.SearchForGame();
                     break;
             }

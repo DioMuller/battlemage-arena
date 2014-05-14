@@ -125,7 +125,7 @@ namespace BattlemageArena.GameLogic.Screens
             {
                 // TODO: Add network logic.
                 _showOptions = false;
-                GameMain.ChangeState(GameState.WaitingPlayers);
+                GameMain.ChangeState(GameState.CreatingHost);
             }));
 
             _options.Position = new Rectangle(30, 200, width - 60, height - 220);

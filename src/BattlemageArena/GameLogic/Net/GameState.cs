@@ -13,6 +13,7 @@ namespace BattlemageArena.GameLogic.Net
         PlayingLocal,
         PlayingClient,
         PlayingHost,
+        CreatingHost,
         GameEnded
     }
 }

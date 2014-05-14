@@ -47,8 +47,15 @@ namespace BattlemageArena.GameLogic.Net
 
         #region Methods
 
+        public void Reinitialize()
+        {
+            _behaviors = new List<NetworkBehavior>();
+            _counter = 1;
+        }
+
         public void CreateSession()
         {
+            if( _session != null ) _session.Dispose();
             _session = NetworkSession.Create(NetworkSessionType.SystemLink, 1, 2);
             _session.GamerJoined += new EventHandler<GamerJoinedEventArgs>(Host_GamerJoined);
             _session.GamerLeft += new EventHandler<GamerLeftEventArgs>(Host_GamerLeft);
