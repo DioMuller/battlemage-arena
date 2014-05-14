@@ -49,28 +49,43 @@ namespace BattlemageArena.GameLogic.Net
 
         public void CreateSession()
         {
-            _session = NetworkSession.Create(NetworkSessionType.SystemLink, 1, 2);
-            _session.GamerJoined += new EventHandler<GamerJoinedEventArgs>(Host_GamerJoined);
-            _session.GamerLeft += new EventHandler<GamerLeftEventArgs>(Host_GamerLeft);
+            if (Gamer.SignedInGamers.Count == 0)
+            {
+                SignIn();
+            }
+            else
+            {
 
-            GameMain.ChangeState(GameState.WaitingPlayers);
+                _session = NetworkSession.Create(NetworkSessionType.SystemLink, 1, 2);
+                _session.GamerJoined += new EventHandler<GamerJoinedEventArgs>(Host_GamerJoined);
+                _session.GamerLeft += new EventHandler<GamerLeftEventArgs>(Host_GamerLeft);
 
-            IsHost = true;
+                GameMain.ChangeState(GameState.WaitingPlayers);
+
+                IsHost = true;
+            }
         }
 
         public void SearchForGame()
         {
-            AvailableNetworkSessionCollection sessions = NetworkSession.Find(NetworkSessionType.SystemLink, 1, null);
-            if (sessions.Count > 0)
+            if (Gamer.SignedInGamers.Count == 0)
             {
-                AvailableNetworkSession mySession = sessions[0]; 
-                _session = NetworkSession.Join(mySession); 
-                _session.GamerLeft += new EventHandler<GamerLeftEventArgs>(Client_GamerLeft);
+                SignIn();
+            }
+            else
+            {
+                AvailableNetworkSessionCollection sessions = NetworkSession.Find(NetworkSessionType.SystemLink, 1, null);
+                if (sessions.Count > 0)
+                {
+                    AvailableNetworkSession mySession = sessions[0];
+                    _session = NetworkSession.Join(mySession);
+                    _session.GamerLeft += new EventHandler<GamerLeftEventArgs>(Client_GamerLeft);
 
-                GameMain.ChangeState(GameState.PlayingClient);
+                    GameMain.ChangeState(GameState.PlayingClient);
 
-                IsHost = false;
-            } 
+                    IsHost = false;
+                }
+            }
         }
 
         public int GetUniqueValue()
@@ -84,6 +99,16 @@ namespace BattlemageArena.GameLogic.Net
         {
             _behaviors.Add(behavior);
         }
+
+        public void SignIn()
+        {
+            if (Gamer.SignedInGamers.Count == 0)
+            {
+                if (Guide.IsVisible == false)
+                    Guide.ShowSignIn(1, false);
+            }
+        }
+
         #endregion Methods
 
         #region Event Handlers
