@@ -10,10 +10,8 @@ namespace BattlemageArena.GameLogic.Behaviors
 {
     class NetPlayerBehavior : NetworkBehavior
     {
-        public NetPlayerBehavior(Entity parent) : base(parent, "Player", 64, true)
-        {
-            
-        }
+        public NetPlayerBehavior(Entity parent) : base(parent, "Player", 64, true) {}
+        public NetPlayerBehavior(Entity parent, int id) : base(parent, "Player", 64, id) { }
 
         public override void SendData(PacketWriter writer)
         {

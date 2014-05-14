@@ -57,7 +57,7 @@ namespace BattlemageArena.GameLogic.Screens
 
         #region Constructor
 
-        public Level(string background, int width, int height, int playerCount, bool useKeyboard)
+        public Level(string background, int width, int height, int playerCount, bool useKeyboard, GameState gameType)
         {
             int diff = useKeyboard ? 0 : 1;
 
@@ -81,9 +81,19 @@ namespace BattlemageArena.GameLogic.Screens
             _winnerColor = Color.Black;
             _winnerText = String.Empty;
 
-            for (int i = 0; i < playerCount; i++)
+            if (gameType == GameState.PlayingLocal)
             {
-                _entities.Add(new Player(this, positions[i], colors[i], inputs[i + diff], names[i]));
+                for (int i = 0; i < playerCount; i++)
+                {
+                    _entities.Add(new Player(this, positions[i], colors[i], inputs[i + diff], names[i]));
+                }
+            }
+            else if (gameType == GameState.PlayingHost || gameType == GameState.PlayingClient)
+            {
+                int mod = (gameType == GameState.PlayingHost) ? 0 : 1;
+                Player local = new Player(this, positions[mod], colors[mod], inputs[diff], GameMain.CurrentSession.LocalGamers[0].DisplayName);
+                local.Behaviors.Add(new NetPlayerBehavior(local));
+                GameMain.Connection.CreatePlayer(local);
             }
         }
         #endregion Constructor

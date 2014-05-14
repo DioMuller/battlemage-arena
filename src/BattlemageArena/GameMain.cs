@@ -36,7 +36,7 @@ namespace BattlemageArena
 
         private GameState _currentState;
 
-        private readonly NetworkConnection _connection;
+        private NetworkConnection _connection;
 
         private Song _titleSong;
         private Song _gameSong;
@@ -167,6 +167,11 @@ namespace BattlemageArena
                 case GameState.TitleScreen:
                     _title.Draw(gameTime, _spriteBatch);
                     break;
+                case GameState.PlayingHost:
+                case GameState.PlayingClient:
+                    _connection.Update(gameTime);
+                    _level.Draw(gameTime, _spriteBatch);
+                    break;
                 case GameState.PlayingLocal:
                     _level.Draw(gameTime, _spriteBatch);
                     break;
@@ -180,9 +185,9 @@ namespace BattlemageArena
 
         #region Methods
 
-        internal void Reset()
+        internal void Reset(GameState state)
         {
-            _level = new Level("Images/arena", Width, Height, PlayerCount, UseKeyboard );
+            _level = new Level("Images/arena", Width, Height, PlayerCount, UseKeyboard, state );
         }
 
         private void ChangeGameState(GameState state)
@@ -190,16 +195,25 @@ namespace BattlemageArena
             switch (state)
             {
                 case GameState.TitleScreen:
-                    Reset();
-                    _currentState = GameState.TitleScreen;
                     MediaPlayer.Play(_titleSong);
                     break;
                 case GameState.PlayingLocal:
-                        Reset();
-                        _currentState = GameState.PlayingLocal;
-                        MediaPlayer.Play(_gameSong);
+                case GameState.PlayingHost:
+                case GameState.PlayingClient:
+                    Reset(state);
+                    MediaPlayer.Play(_gameSong);
+                    break;
+                case GameState.WaitingPlayers:
+                    _connection = new NetworkConnection(this);
+                    _connection.CreateSession();
+                    break;
+                case GameState.SearchingGame:
+                    _connection = new NetworkConnection(this);
+                    _connection.SearchForGame();
                     break;
             }
+
+            _currentState = state;
         }
         #endregion Methods
 

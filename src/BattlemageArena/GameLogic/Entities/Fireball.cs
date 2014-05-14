@@ -25,6 +25,7 @@ namespace BattlemageArena.GameLogic.Entities
             Sprite = new Sprite("Sprites/fireball", new Point(48, 48), 100);
             Sprite.Origin = new Vector2(24,24);
             Position = position;
+            Direction = direction;
 
             Color = color;
 
@@ -56,6 +57,10 @@ namespace BattlemageArena.GameLogic.Entities
             Sprite.ChangeAnimation(0);
         }
         #endregion Constructor
+
+        #region Properties
+        public Direction Direction { get; set; }
+        #endregion Properties
 
         #region Methods
 

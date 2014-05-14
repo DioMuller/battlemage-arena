@@ -23,7 +23,7 @@ namespace BattlemageArena.GameLogic.Entities
         Left = 3
     }
 
-    class Player : Entity
+    public class Player : Entity
     {
         #region Attributes
         /// <summary>

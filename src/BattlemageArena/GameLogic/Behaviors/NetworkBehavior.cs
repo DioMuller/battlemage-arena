@@ -43,6 +43,19 @@ namespace BattlemageArena.GameLogic.Behaviors
 
             GameMain.Connection.AddBehavior(this);
         }
+
+        public NetworkBehavior(Entity parent, string type, float timeBetween, int id)
+            : base(parent)
+        {
+            this.Id = id;
+            this.Type = type;
+
+            _player = GameMain.CurrentSession.LocalGamers[0];
+
+            _timeBetween = _timeElapsed = timeBetween;
+
+            GameMain.Connection.AddBehavior(this);
+        }
         #endregion Constructor
 
         #region Methods

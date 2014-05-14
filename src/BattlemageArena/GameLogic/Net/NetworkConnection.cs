@@ -4,7 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using BattlemageArena.Core.Input;
 using BattlemageArena.GameLogic.Behaviors;
+using BattlemageArena.GameLogic.Entities;
+using BattlemageArena.GameLogic.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Net;
@@ -123,15 +126,115 @@ namespace BattlemageArena.GameLogic.Net
                 NetworkGamer sender;
                 LocalHost.ReceiveData(_reader, out sender);
                 string type = _reader.ReadString();
-                int id = _reader.ReadInt32();
-                NetworkBehavior net = _behaviors.FirstOrDefault((b) => b.Id == id);
+                int id;
 
-                if (net != null)
+                if (type == "Player" || type == "Fireball")
                 {
-                    net.ReceiveData(_reader);
+                    id = _reader.ReadInt32();
+                    NetworkBehavior net = _behaviors.FirstOrDefault((b) => b.Id == id);
+
+                    if (net != null)
+                    {
+                        net.ReceiveData(_reader);
+                    }
+                }
+                if (type == "CreatePlayer")
+                {
+                    id = _reader.ReadInt32();
+                    string name = _reader.ReadString();
+                    Vector2 position = _reader.ReadVector2();
+                    int health = _reader.ReadInt32();
+                    Color color = _reader.ReadColor();
+
+                    if (id != _session.LocalGamers[0].Id)
+                    {
+                        Player player = new Player(GameMain.CurrentLevel, position, color, new GenericInput(), name)
+                        {
+                            Health = health
+                        };
+                        player.Behaviors.Add(new NetPlayerBehavior(player, id));
+                        GameMain.CurrentLevel.AddEntity(player);
+                    }
+                }
+                if (type == "CreateFireball")
+                {
+                    id = _reader.ReadInt32();
+                    Vector2 position = _reader.ReadVector2();
+                    Direction direction = (Direction)_reader.ReadInt32();
+                    Color color = _reader.ReadColor();
+
+                    Fireball fireball = new Fireball(GameMain.CurrentLevel, position, color, direction);
+                    fireball.Behaviors.Add(new NetFireballBehavior(fireball, id));
+                    GameMain.CurrentLevel.AddEntity(fireball);
+                }
+                if (type == "RequestFireball")
+                {
+                    Vector2 position = _reader.ReadVector2();
+                    Direction direction = (Direction)_reader.ReadInt32();
+                    Color color = _reader.ReadColor();
+
+                    Fireball fireball = new Fireball(GameMain.CurrentLevel, position, color, direction);
+                    fireball.Behaviors.Add(new NetFireballBehavior(fireball));
+                    //GameMain.CurrentLevel.AddEntity(fireball);
+                    CreateFireball(fireball);
                 }
             }
+
+            _session.Update();
         }
         #endregion Game Cycle
+
+        #region Helper Methods
+
+        public void CreatePlayer(Player player)
+        {
+            NetPlayerBehavior b = player.GetBehavior<NetPlayerBehavior>();
+
+            if (b != null)
+            {
+                _writer.Write("CreatePlayer");
+                _writer.Write(b.Id);
+
+                _writer.Write(player.Name);
+                _writer.Write(player.Position);
+                _writer.Write(player.Health);
+                _writer.Write(player.Color);
+
+                _session.LocalGamers[0].SendData(_writer, SendDataOptions.ReliableInOrder);
+            }
+            else
+            {
+                throw new Exception("Could not create other player: Player doesn't have NetworkBehavior.");
+            }
+        }
+
+        public void CreateFireball(Fireball fireball)
+        {
+            NetFireballBehavior b = fireball.GetBehavior<NetFireballBehavior>();
+
+            if (b != null)
+            {
+                if (IsHost)
+                {
+                    _writer.Write("CreateFireball");
+                    _writer.Write(b.Id);
+                }
+                else
+                {
+                    _writer.Write("RequestFireball");
+                }
+
+                _writer.Write(fireball.Position);
+                _writer.Write((int) fireball.Direction);
+                _writer.Write(fireball.Color);
+
+                _session.LocalGamers[0].SendData(_writer, SendDataOptions.ReliableInOrder);
+            }
+            else
+            {
+                throw new Exception("Could not create other player: Player doesn't have NetworkBehavior.");
+            }
+        }
+        #endregion Helper Methods
     }
 }
