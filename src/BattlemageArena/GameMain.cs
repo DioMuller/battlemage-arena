@@ -147,6 +147,17 @@ namespace BattlemageArena
                     case GameState.PlayingLocal:
                        _level.Update(gameTime);
                        break;
+                    case GameState.PlayingHost:
+                    case GameState.PlayingClient:
+                        _level.Update(gameTime);
+                        _connection.Update(gameTime);
+                        break;
+                    case GameState.WaitingPlayers:
+                        _connection.Session.Update();
+                        break;
+                    case GameState.SearchingGame:
+                        _connection.SearchForGame();
+                        break;
             }
 
             base.Update(gameTime);
@@ -210,7 +221,7 @@ namespace BattlemageArena
                     _connection.CreateSession();
                     break;
                 case GameState.SearchingGame:
-                    _connection.Reinitialize();
+                    //_connection.Reinitialize();
                     _connection.SearchForGame();
                     break;
             }

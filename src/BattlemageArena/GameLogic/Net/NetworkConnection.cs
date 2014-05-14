@@ -126,6 +126,7 @@ namespace BattlemageArena.GameLogic.Net
             if( _session.RemoteGamers.Count >= 1 )
             {
                 GameMain.ChangeState(GameState.PlayingHost);
+                _session.StartGame();
             }
         }
 
