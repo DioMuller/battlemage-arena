@@ -224,7 +224,7 @@ namespace BattlemageArena
                     _connection.CreateSession();
                     break;
                 case GameState.SearchingGame:
-                    _connection.SearchForGame();
+                    //_connection.SearchForGame();
                     break;
             }
 

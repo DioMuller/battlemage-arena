@@ -85,13 +85,21 @@ namespace BattlemageArena.GameLogic.Net
                 AvailableNetworkSessionCollection sessions = NetworkSession.Find(NetworkSessionType.SystemLink, 1, null);
                 if (sessions.Count > 0)
                 {
-                    AvailableNetworkSession mySession = sessions[0];
-                    _session = NetworkSession.Join(mySession);
-                    _session.GamerLeft += new EventHandler<GamerLeftEventArgs>(Client_GamerLeft);
+                    try
+                    {
+                        AvailableNetworkSession mySession = sessions[0];
+                        _session = NetworkSession.Join(mySession);
+                        _session.GamerLeft += new EventHandler<GamerLeftEventArgs>(Client_GamerLeft);
 
-                    GameMain.ChangeState(GameState.PlayingClient);
+                        GameMain.ChangeState(GameState.PlayingClient);
 
-                    IsHost = false;
+                        IsHost = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Not the best solution, but...
+                        GameMain.ChangeState(GameState.TitleScreen);
+                    }
                 }
             }
         }
