@@ -123,6 +123,8 @@ namespace BattlemageArena.GameLogic.Screens
 
             _options.AddComponent(new Button("Host Game", () =>
             {
+                if (GameMain.CurrentState != GameState.TitleScreen) return;
+
                 // TODO: Add network logic.
                 _showOptions = false;
                 GameMain.ChangeState(GameState.CreatingHost);

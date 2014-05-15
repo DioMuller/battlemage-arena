@@ -153,6 +153,7 @@ namespace BattlemageArena
                         _connection.Update(gameTime);
                         break;
                     case GameState.WaitingPlayers:
+                    case GameState.CreatingHost:
                         _connection.Session.Update();
                         break;
                     case GameState.SearchingGame:
@@ -198,6 +199,7 @@ namespace BattlemageArena
 
         internal void Reset(GameState state)
         {
+            //if( state == GameState.PlayingLocal || state == GameState.CreatingHost)
             _level = new Level("Images/arena", Width, Height, PlayerCount, UseKeyboard, state );
         }
 
@@ -217,11 +219,11 @@ namespace BattlemageArena
                 case GameState.WaitingPlayers:
                     break;
                 case GameState.CreatingHost:
+                    Reset(state);
                     _connection.Reinitialize();
                     _connection.CreateSession();
                     break;
                 case GameState.SearchingGame:
-                    //_connection.Reinitialize();
                     _connection.SearchForGame();
                     break;
             }
