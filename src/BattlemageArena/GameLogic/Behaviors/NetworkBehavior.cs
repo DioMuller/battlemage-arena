@@ -13,6 +13,7 @@ namespace BattlemageArena.GameLogic.Behaviors
         #region Attributes
         private float _timeBetween;
         private float _timeElapsed;
+        private bool _isUnique;
         private LocalNetworkGamer _player;
         #endregion Attributes
 
@@ -41,6 +42,8 @@ namespace BattlemageArena.GameLogic.Behaviors
 
             _timeBetween = _timeElapsed = timeBetween;
 
+            _isUnique = unique;
+
             GameMain.Connection.AddBehavior(this);
         }
 
@@ -55,6 +58,8 @@ namespace BattlemageArena.GameLogic.Behaviors
             _timeBetween = _timeElapsed = timeBetween;
 
             GameMain.Connection.AddBehavior(this);
+
+            _isUnique = false;
         }
         #endregion Constructor
 
@@ -66,6 +71,13 @@ namespace BattlemageArena.GameLogic.Behaviors
         public override void Update(GameTime gameTime)
         {
             if (!GameMain.CurrentSession.IsHost &&
+                Id != GameMain.CurrentSession.LocalGamers[0].Id)
+            {
+                // Not my object!
+                return;
+            }
+
+            if (GameMain.CurrentSession.IsHost && _isUnique &&
                 Id != GameMain.CurrentSession.LocalGamers[0].Id)
             {
                 // Not my object!

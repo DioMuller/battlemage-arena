@@ -22,7 +22,8 @@ namespace BattlemageArena.GameLogic.Net
         private PacketReader _reader;
         private PacketWriter _writer;
         private int _counter;
-        private List<NetworkBehavior> _behaviors; 
+        private List<NetworkBehavior> _behaviors;
+        private DateTime _lastRequest;
         #endregion Attributes
 
         #region Properties
@@ -42,6 +43,8 @@ namespace BattlemageArena.GameLogic.Net
             _writer = new PacketWriter();
 
             _behaviors = new List<NetworkBehavior>();
+
+            _lastRequest = DateTime.Now;
         }
         #endregion Constructors
 
@@ -279,7 +282,11 @@ namespace BattlemageArena.GameLogic.Net
             _writer.Write((int) fireball.Direction);
             _writer.Write(fireball.Color);
 
-            _session.LocalGamers[0].SendData(_writer, SendDataOptions.ReliableInOrder);
+            if( ( DateTime.Now - _lastRequest).Seconds > 2.0f )
+            {
+                _session.LocalGamers[0].SendData(_writer, SendDataOptions.ReliableInOrder);
+                _lastRequest = DateTime.Now;
+            }
 
             if (IsHost)
             {
