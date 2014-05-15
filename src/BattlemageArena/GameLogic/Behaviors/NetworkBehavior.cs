@@ -32,7 +32,7 @@ namespace BattlemageArena.GameLogic.Behaviors
             }
             else
             {
-                GameMain.CurrentLevel.NetController = this;
+                //GameMain.CurrentLevel.NetController = this;
             }
 
             this.Type = type;

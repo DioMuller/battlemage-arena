@@ -81,6 +81,7 @@ namespace BattlemageArena.GameLogic.Net
             }
             else
             {
+                if (_session != null) _session.Dispose();
                 AvailableNetworkSessionCollection sessions = NetworkSession.Find(NetworkSessionType.SystemLink, 1, null);
                 if (sessions.Count > 0)
                 {
@@ -243,30 +244,35 @@ namespace BattlemageArena.GameLogic.Net
 
         public void CreateFireball(Fireball fireball)
         {
-            NetFireballBehavior b = fireball.GetBehavior<NetFireballBehavior>();
-
-            if (b != null)
+            if (IsHost)
             {
-                if (IsHost)
+                NetFireballBehavior b = fireball.GetBehavior<NetFireballBehavior>();
+
+                if (b != null)
                 {
                     _writer.Write("CreateFireball");
                     _writer.Write(b.Id);
                 }
                 else
                 {
-                    _writer.Write("RequestFireball");
+                    throw new Exception("Could not create fireball: Fireball doesn't have NetworkBehavior.");
                 }
-
-                _writer.Write(fireball.Position);
-                _writer.Write((int) fireball.Direction);
-                _writer.Write(fireball.Color);
-
-                _session.LocalGamers[0].SendData(_writer, SendDataOptions.ReliableInOrder);
             }
             else
             {
-                throw new Exception("Could not create other player: Player doesn't have NetworkBehavior.");
+                _writer.Write("RequestFireball");
             }
+
+            _writer.Write(fireball.Position);
+            _writer.Write((int) fireball.Direction);
+            _writer.Write(fireball.Color);
+
+            _session.LocalGamers[0].SendData(_writer, SendDataOptions.ReliableInOrder);
+
+            if (IsHost)
+            {
+                GameMain.CurrentLevel.AddEntity(fireball);
+            }            
         }
         #endregion Helper Methods
     }

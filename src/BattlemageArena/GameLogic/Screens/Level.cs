@@ -34,6 +34,8 @@ namespace BattlemageArena.GameLogic.Screens
         protected Vector2 _screenCenter;
         protected float _winnerTimer;
 
+        protected float _connDelayTime;
+
         private SoundEffect _fireballSfx;
         #endregion Attributes
 
@@ -81,8 +83,11 @@ namespace BattlemageArena.GameLogic.Screens
             _winnerColor = Color.Black;
             _winnerText = String.Empty;
 
+
             if (gameType == GameState.PlayingLocal)
             {
+                _connDelayTime = 0;
+
                 for (int i = 0; i < playerCount; i++)
                 {
                     _entities.Add(new Player(this, positions[i], colors[i], inputs[i + diff], names[i]));
@@ -90,10 +95,16 @@ namespace BattlemageArena.GameLogic.Screens
             }
             else if (gameType == GameState.PlayingHost || gameType == GameState.PlayingClient)
             {
+                _connDelayTime = 5000;
+
                 int mod = (gameType == GameState.PlayingHost) ? 0 : 1;
                 Player local = new Player(this, positions[mod], colors[mod], inputs[diff], GameMain.CurrentSession.LocalGamers[0].Gamertag);
-                local.Behaviors.Add(new NetPlayerBehavior(local));
+                NetPlayerBehavior localController = new NetPlayerBehavior(local);
+                local.Behaviors.Add(localController);
                 GameMain.Connection.CreatePlayer(local);
+                NetController = localController;
+
+                _entities.Add(local);
             }
         }
         #endregion Constructor
@@ -119,27 +130,31 @@ namespace BattlemageArena.GameLogic.Screens
             // Checks for game exit/reset.
             if (!_gameEnded)
             {
-                // Check if someone won.
-                var players = _entities.OfType<Player>().Where( pl => !pl.Dead);
-                int count = players.Count();
-                if (count <= 1)
+                if (_connDelayTime > 0) _connDelayTime -= gameTime.ElapsedGameTime.Milliseconds;
+                else
                 {
-                    if (players.Count() == 0)
+                    // Check if someone won.
+                    var players = _entities.OfType<Player>().Where(pl => !pl.Dead);
+                    int count = players.Count();
+                    if (count <= 1)
                     {
-                        _winnerColor = Color.White;
-                        _winnerText = "Draw!";
-                    }
-                    else
-                    {
-                        Player player = players.First();
-                        _winnerColor = player.Color;
-                        _winnerText = player.Name + " Wins!";
-                    }
+                        if (players.Count() == 0)
+                        {
+                            _winnerColor = Color.White;
+                            _winnerText = "Draw!";
+                        }
+                        else
+                        {
+                            Player player = players.First();
+                            _winnerColor = player.Color;
+                            _winnerText = player.Name + " Wins!";
+                        }
 
-                    _winnerTimer = 5000;
+                        _winnerTimer = 5000;
 
-                    _textOrigin = (_winFont.MeasureString(_winnerText) / 2);
-                    _gameEnded = true;
+                        _textOrigin = (_winFont.MeasureString(_winnerText) / 2);
+                        _gameEnded = true;
+                    }
                 }
             }
             else
@@ -216,8 +231,15 @@ namespace BattlemageArena.GameLogic.Screens
 
         public void AddFireball(Vector2 position, Color color, Direction direction)
         {
-            AddEntity(new Fireball(this, position, color, direction));
-            _fireballSfx.Play();
+            if (GameMain.CurrentState == GameState.PlayingLocal)
+            {
+                AddEntity(new Fireball(this, position, color, direction));
+                _fireballSfx.Play();
+            }
+            else
+            {
+                GameMain.Connection.CreateFireball(new Fireball(this, position, color, direction));
+            }
         }
         #endregion Game Specific Methods
     }
