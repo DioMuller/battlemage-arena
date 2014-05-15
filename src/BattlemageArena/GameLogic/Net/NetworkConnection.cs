@@ -162,10 +162,20 @@ namespace BattlemageArena.GameLogic.Net
                 string type = _reader.ReadString();
                 int id;
 
-                if (type == "Player" || type == "Fireball")
+                if (type == "Player")
                 {
                     id = _reader.ReadInt32();
-                    NetworkBehavior net = _behaviors.FirstOrDefault((b) => b.Id == id);
+                    NetworkBehavior net = _behaviors.OfType<NetPlayerBehavior>().FirstOrDefault((b) => b.Id == id);
+
+                    if (net != null)
+                    {
+                        net.ReceiveData(_reader);
+                    }
+                }
+                if (type == "Fireball")
+                {
+                    id = _reader.ReadInt32();
+                    NetworkBehavior net = _behaviors.OfType<NetFireballBehavior>().FirstOrDefault((b) => b.Id == id);
 
                     if (net != null)
                     {
@@ -246,17 +256,11 @@ namespace BattlemageArena.GameLogic.Net
         {
             if (IsHost)
             {
-                NetFireballBehavior b = fireball.GetBehavior<NetFireballBehavior>();
+                NetFireballBehavior b = new NetFireballBehavior(fireball);
+                fireball.Behaviors.Add(b);
 
-                if (b != null)
-                {
-                    _writer.Write("CreateFireball");
-                    _writer.Write(b.Id);
-                }
-                else
-                {
-                    throw new Exception("Could not create fireball: Fireball doesn't have NetworkBehavior.");
-                }
+                _writer.Write("CreateFireball");
+                _writer.Write(b.Id);
             }
             else
             {
