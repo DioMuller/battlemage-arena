@@ -91,7 +91,7 @@ namespace BattlemageArena.GameLogic.Screens
             else if (gameType == GameState.PlayingHost || gameType == GameState.PlayingClient)
             {
                 int mod = (gameType == GameState.PlayingHost) ? 0 : 1;
-                Player local = new Player(this, positions[mod], colors[mod], inputs[diff], GameMain.CurrentSession.LocalGamers[0].DisplayName);
+                Player local = new Player(this, positions[mod], colors[mod], inputs[diff], GameMain.CurrentSession.LocalGamers[0].Gamertag);
                 local.Behaviors.Add(new NetPlayerBehavior(local));
                 GameMain.Connection.CreatePlayer(local);
             }

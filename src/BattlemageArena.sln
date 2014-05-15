@@ -1,11 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BattlemageArena", "BattlemageArena\BattlemageArena.csproj", "{A05D8A68-A0F6-47C6-9410-BB2F4C20AB19}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "BattlemageArenaContent", "BattlemageArenaContent\BattlemageArenaContent.contentproj", "{B38D3692-E875-4F05-9B0C-AD7634FDBAE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BattlemageArenaContent", "BattlemageArenaContent\BattlemageArenaContent.contentproj", "{B38D3692-E875-4F05-9B0C-AD7634FDBAE3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
