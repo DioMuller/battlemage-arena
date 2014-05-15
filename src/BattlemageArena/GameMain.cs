@@ -199,8 +199,8 @@ namespace BattlemageArena
 
         internal void Reset(GameState state)
         {
-            if( state == GameState.PlayingLocal || state == GameState.CreatingHost)
-                _level = new Level("Images/arena", Width, Height, PlayerCount, UseKeyboard, state );
+            //if( state == GameState.PlayingLocal || state == GameState.CreatingHost)
+            _level = new Level("Images/arena", Width, Height, PlayerCount, UseKeyboard, state );
         }
 
         private void ChangeGameState(GameState state)
@@ -224,7 +224,6 @@ namespace BattlemageArena
                     _connection.CreateSession();
                     break;
                 case GameState.SearchingGame:
-                    //_connection.Reinitialize();
                     _connection.SearchForGame();
                     break;
             }
