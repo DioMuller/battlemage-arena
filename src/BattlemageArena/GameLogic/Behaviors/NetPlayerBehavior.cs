@@ -31,9 +31,24 @@ namespace BattlemageArena.GameLogic.Behaviors
 
             if (player != null)
             {
-                player.Position = reader.ReadVector2();
-                player.Direction = (Direction) reader.ReadInt32();
-                player.Health = reader.ReadInt32();
+                if (Id != (int) GameMain.CurrentSession.LocalGamers[0].Id)
+                {
+                    player.Position = reader.ReadVector2();
+                    player.Direction = (Direction) reader.ReadInt32();
+                    player.Health = reader.ReadInt32();
+                }
+                else
+                {
+                    //throw away!
+                    reader.ReadVector2();
+                    reader.ReadInt32();
+                    //Update Health.
+                    player.Health = reader.ReadInt32();
+                }
+            }
+            else
+            {
+                throw new Exception("Player Net Behavior on non-player object.");
             }
         }
     }

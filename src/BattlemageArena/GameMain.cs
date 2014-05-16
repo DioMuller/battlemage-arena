@@ -182,6 +182,8 @@ namespace BattlemageArena
             switch (_currentState)
             {
                 case GameState.TitleScreen:
+                    if( _connection.Session != null ) _connection.Session.Dispose();
+                    _connection = new NetworkConnection(this);
                     _title.Draw(gameTime, _spriteBatch);
                     break;
                 case GameState.PlayingHost:
