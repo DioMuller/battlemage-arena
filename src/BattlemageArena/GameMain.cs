@@ -33,6 +33,8 @@ namespace BattlemageArena
         private SpriteBatch _spriteBatch;
         private TitleScreen _title;
         private Level _level;
+        private MessageScreen _hostingScreen;
+        private MessageScreen _searchingScreen;
 
         private GameState _currentState;
 
@@ -110,6 +112,9 @@ namespace BattlemageArena
 
             _title = new TitleScreen("Images/arena", Width, Height);
 
+            _hostingScreen = new MessageScreen("Images/arena", Width, Height, "Searching for Players...");
+            _searchingScreen = new MessageScreen("Images/arena", Width, Height, "Searching for Games...");
+
             //Reset();
 
             _titleSong = GameContent.LoadContent<Song>("Music/Title");
@@ -181,11 +186,15 @@ namespace BattlemageArena
                     break;
                 case GameState.PlayingHost:
                 case GameState.PlayingClient:
-                    _connection.Update(gameTime);
-                    _level.Draw(gameTime, _spriteBatch);
-                    break;
                 case GameState.PlayingLocal:
                     _level.Draw(gameTime, _spriteBatch);
+                    break;
+                case GameState.CreatingHost:
+                case GameState.WaitingPlayers:
+                    _hostingScreen.Draw(gameTime, _spriteBatch);
+                    break;
+                case GameState.SearchingGame:
+                    _searchingScreen.Draw(gameTime, _spriteBatch);
                     break;
             }
 
