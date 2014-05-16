@@ -229,7 +229,7 @@ namespace BattlemageArena.GameLogic.Net
                     Color color = _reader.ReadColor();
 
                     Fireball fireball = new Fireball(GameMain.CurrentLevel, position, color, direction);
-                    fireball.Behaviors.Add(new NetFireballBehavior(fireball));
+                    fireball.Behaviors.Add(new NetFireballBehavior(fireball, 0));
                     //GameMain.CurrentLevel.AddEntity(fireball);
                     CreateFireball(fireball);
                 }
@@ -282,7 +282,7 @@ namespace BattlemageArena.GameLogic.Net
             _writer.Write((int) fireball.Direction);
             _writer.Write(fireball.Color);
 
-            if( ( DateTime.Now - _lastRequest).Seconds > 2.0f )
+            //if( ( DateTime.Now - _lastRequest).Seconds > 2.0f )
             {
                 _session.LocalGamers[0].SendData(_writer, SendDataOptions.ReliableInOrder);
                 _lastRequest = DateTime.Now;
