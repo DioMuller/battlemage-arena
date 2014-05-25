@@ -24,6 +24,7 @@ namespace BattlemageArena.GameLogic.Net
         private int _counter;
         private List<NetworkBehavior> _behaviors;
         private DateTime _lastRequest;
+        private DateTime _lastFireball;
         #endregion Attributes
 
         #region Properties
@@ -54,6 +55,7 @@ namespace BattlemageArena.GameLogic.Net
         {
             _behaviors = new List<NetworkBehavior>();
             _counter = 1;
+            _lastFireball = DateTime.Now;
         }
 
         public void CreateSession()
@@ -282,7 +284,7 @@ namespace BattlemageArena.GameLogic.Net
             _writer.Write((int) fireball.Direction);
             _writer.Write(fireball.Color);
 
-            //if( ( DateTime.Now - _lastRequest).Seconds > 2.0f )
+            if( ( DateTime.Now - _lastRequest).Seconds > 2.0f )
             {
                 _session.LocalGamers[0].SendData(_writer, SendDataOptions.ReliableInOrder);
                 _lastRequest = DateTime.Now;
