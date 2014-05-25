@@ -10,7 +10,7 @@ namespace BattlemageArena.GameLogic.Behaviors
 {
     class NetFireballBehavior : NetworkBehavior
     {
-        public NetFireballBehavior(Entity parent) : base(parent, "Fireball", 64, true){}
+        public NetFireballBehavior(Entity parent) : base(parent, "Fireball", 64, false){}
         public NetFireballBehavior(Entity parent, int id) : base(parent, "Fireball", 64, id) { }
 
         public override void SendData(PacketWriter writer)
